@@ -31,7 +31,11 @@ function MarkdownLink({ href = "", children, ...rest }: ComponentPropsWithoutRef
 const components: Components = {
   h2: ({ children }) => <h2 id={slugify(textOf(children))}>{children}</h2>,
   h3: ({ children }) => <h3 id={slugify(textOf(children))}>{children}</h3>,
-  a: ({ node: _node, ...props }) => <MarkdownLink {...props} />,
+  a: ({ href, children, title }) => (
+    <MarkdownLink href={href} title={title}>
+      {children}
+    </MarkdownLink>
+  ),
   table: ({ children }) => (
     <div className="overflow-x-auto">
       <table>{children}</table>

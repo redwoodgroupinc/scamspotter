@@ -61,9 +61,9 @@ export default async function GuidePage({ params }: GuidePageProps) {
           <h1 className="mt-2 text-3xl font-bold tracking-tight text-navy-950 sm:text-4xl">{guide.title}</h1>
           <p className="mt-4 text-xl leading-relaxed text-navy-700">{guide.summary}</p>
           <p className="mt-4 text-sm text-navy-600">
-            By the{" "}
+            Published by{" "}
             <Link href="/editorial-policy" className="text-link">
-              ScamSpotter editorial team
+              ScamSpotter
             </Link>{" "}
             &middot; Published <time dateTime={guide.published}>{formatDate(guide.published)}</time>
             {guide.updated !== guide.published && (
