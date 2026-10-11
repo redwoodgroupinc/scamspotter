@@ -1,0 +1,243 @@
+/**
+ * Reference data for local URL and sender-address checks.
+ *
+ * These lists are deliberately small and hand-maintained. They are NOT a
+ * reputation database: a domain missing from a list is not "unknown" or
+ * "unsafe", and a domain on a list is not guaranteed to be safe.
+ */
+
+export interface BrandProfile {
+  /** Display name. */
+  name: string;
+  /**
+   * Lowercase tokens that suggest the brand when they appear in a hostname or
+   * sender address. Matched as whole tokens (split on dots, hyphens, digits).
+   */
+  keywords: string[];
+  /**
+   * Keywords distinctive enough to match inside longer labels too, e.g.
+   * "paypal" in "paypalsecure". Keep this to names that are rarely part of
+   * ordinary words.
+   */
+  substringKeywords?: string[];
+  /** Exact registrable domains known to belong to the brand. */
+  officialDomains: string[];
+  /** Hostname suffixes owned by the organisation, e.g. "gov.uk". */
+  officialSuffixes?: string[];
+  /** Spellings compared against lookalike domain labels (6+ letters for typo checks). */
+  typoLabels?: string[];
+  kind: "company" | "government";
+}
+
+export const BRANDS: BrandProfile[] = [
+  { name: "PayPal", kind: "company", keywords: ["paypal"], substringKeywords: ["paypal"], officialDomains: ["paypal.com", "paypal.me", "paypalobjects.com"], typoLabels: ["paypal"] },
+  {
+    name: "Amazon",
+    kind: "company",
+    keywords: ["amazon", "amzn"],
+    substringKeywords: ["amazon"],
+    officialDomains: ["amazon.com", "amazon.co.uk", "amazon.ca", "amazon.com.au", "amazon.de", "amazon.fr", "amazon.jobs", "amazonaws.com", "amzn.to", "media-amazon.com"],
+    typoLabels: ["amazon"],
+  },
+  { name: "Apple", kind: "company", keywords: ["apple", "icloud", "itunes", "appleid"], substringKeywords: ["icloud", "appleid"], officialDomains: ["apple.com", "icloud.com", "apple.co", "me.com"], typoLabels: ["apple", "icloud"] },
+  {
+    name: "Microsoft",
+    kind: "company",
+    keywords: ["microsoft", "office365", "onedrive", "outlook", "msft", "sharepoint"],
+    substringKeywords: ["microsoft", "office365", "onedrive", "sharepoint"],
+    officialDomains: ["microsoft.com", "live.com", "outlook.com", "office.com", "office365.com", "microsoftonline.com", "onedrive.com", "sharepoint.com", "hotmail.com", "msn.com", "windows.com", "azure.com", "bing.com", "xbox.com"],
+    typoLabels: ["microsoft", "outlook", "office365"],
+  },
+  { name: "Google", kind: "company", keywords: ["google", "gmail"], substringKeywords: ["google"], officialDomains: ["google.com", "google.co.uk", "google.ca", "google.com.au", "gmail.com", "youtube.com", "goo.gl", "forms.gle"], typoLabels: ["google"] },
+  { name: "Netflix", kind: "company", keywords: ["netflix"], substringKeywords: ["netflix"], officialDomains: ["netflix.com"], typoLabels: ["netflix"] },
+  {
+    name: "Meta (Facebook, Instagram, WhatsApp)",
+    kind: "company",
+    keywords: ["facebook", "instagram", "whatsapp"],
+    substringKeywords: ["facebook", "instagram", "whatsapp"],
+    officialDomains: ["facebook.com", "fb.com", "instagram.com", "whatsapp.com", "whatsapp.net", "meta.com", "messenger.com", "wa.me", "m.me"],
+    typoLabels: ["facebook", "instagram", "whatsapp"],
+  },
+  { name: "LinkedIn", kind: "company", keywords: ["linkedin"], substringKeywords: ["linkedin"], officialDomains: ["linkedin.com", "lnkd.in"], typoLabels: ["linkedin"] },
+  { name: "DocuSign", kind: "company", keywords: ["docusign"], substringKeywords: ["docusign"], officialDomains: ["docusign.com", "docusign.net"], typoLabels: ["docusign"] },
+  { name: "Dropbox", kind: "company", keywords: ["dropbox"], substringKeywords: ["dropbox"], officialDomains: ["dropbox.com"], typoLabels: ["dropbox"] },
+  { name: "Coinbase", kind: "company", keywords: ["coinbase"], substringKeywords: ["coinbase"], officialDomains: ["coinbase.com"], typoLabels: ["coinbase"] },
+  { name: "Binance", kind: "company", keywords: ["binance"], substringKeywords: ["binance"], officialDomains: ["binance.com"], typoLabels: ["binance"] },
+  // Delivery companies
+  { name: "USPS", kind: "company", keywords: ["usps"], officialDomains: ["usps.com", "usps.gov"], typoLabels: ["usps"] },
+  { name: "UPS", kind: "company", keywords: ["ups"], officialDomains: ["ups.com"] },
+  { name: "FedEx", kind: "company", keywords: ["fedex"], officialDomains: ["fedex.com"], typoLabels: ["fedex"] },
+  { name: "DHL", kind: "company", keywords: ["dhl"], officialDomains: ["dhl.com", "dhl.co.uk", "dhl.de"] },
+  { name: "Royal Mail", kind: "company", keywords: ["royalmail"], substringKeywords: ["royalmail"], officialDomains: ["royalmail.com", "royalmailgroup.com"], typoLabels: ["royalmail"] },
+  { name: "Evri", kind: "company", keywords: ["evri", "myhermes"], officialDomains: ["evri.com"] },
+  { name: "DPD", kind: "company", keywords: ["dpd"], officialDomains: ["dpd.co.uk", "dpd.com", "dpdlocal.co.uk"] },
+  { name: "Parcelforce", kind: "company", keywords: ["parcelforce"], substringKeywords: ["parcelforce"], officialDomains: ["parcelforce.com"], typoLabels: ["parcelforce"] },
+  { name: "Canada Post", kind: "company", keywords: ["canadapost", "postescanada"], substringKeywords: ["canadapost", "postescanada"], officialDomains: ["canadapost-postescanada.ca", "canadapost.ca"], typoLabels: ["canadapost"] },
+  { name: "Purolator", kind: "company", keywords: ["purolator"], substringKeywords: ["purolator"], officialDomains: ["purolator.com"], typoLabels: ["purolator"] },
+  { name: "Australia Post", kind: "company", keywords: ["auspost", "australiapost"], substringKeywords: ["auspost", "australiapost"], officialDomains: ["auspost.com.au"], typoLabels: ["auspost"] },
+  { name: "StarTrack", kind: "company", keywords: ["startrack"], officialDomains: ["startrack.com.au"] },
+  { name: "Linkt", kind: "company", keywords: ["linkt"], officialDomains: ["linkt.com.au"] },
+  // Banks and payment services
+  { name: "Chase", kind: "company", keywords: ["chase", "jpmorgan"], officialDomains: ["chase.com", "jpmorganchase.com", "jpmorgan.com"] },
+  { name: "Bank of America", kind: "company", keywords: ["bankofamerica", "bofa"], substringKeywords: ["bankofamerica"], officialDomains: ["bankofamerica.com", "bofa.com"], typoLabels: ["bankofamerica"] },
+  { name: "Wells Fargo", kind: "company", keywords: ["wellsfargo"], substringKeywords: ["wellsfargo"], officialDomains: ["wellsfargo.com", "wf.com"], typoLabels: ["wellsfargo"] },
+  { name: "Citi", kind: "company", keywords: ["citi", "citibank"], substringKeywords: ["citibank"], officialDomains: ["citi.com", "citibank.com"], typoLabels: ["citibank"] },
+  { name: "Capital One", kind: "company", keywords: ["capitalone"], substringKeywords: ["capitalone"], officialDomains: ["capitalone.com"], typoLabels: ["capitalone"] },
+  { name: "Zelle", kind: "company", keywords: ["zelle"], officialDomains: ["zellepay.com", "zelle.com"] },
+  { name: "Venmo", kind: "company", keywords: ["venmo"], officialDomains: ["venmo.com"] },
+  { name: "Barclays", kind: "company", keywords: ["barclays"], substringKeywords: ["barclays"], officialDomains: ["barclays.co.uk", "barclays.com"], typoLabels: ["barclays"] },
+  { name: "HSBC", kind: "company", keywords: ["hsbc"], officialDomains: ["hsbc.co.uk", "hsbc.com", "hsbc.com.au"] },
+  { name: "Lloyds Bank", kind: "company", keywords: ["lloydsbank", "lloyds"], substringKeywords: ["lloydsbank"], officialDomains: ["lloydsbank.com", "lloydsbankinggroup.com"], typoLabels: ["lloydsbank"] },
+  { name: "NatWest", kind: "company", keywords: ["natwest"], substringKeywords: ["natwest"], officialDomains: ["natwest.com"], typoLabels: ["natwest"] },
+  { name: "Santander", kind: "company", keywords: ["santander"], substringKeywords: ["santander"], officialDomains: ["santander.co.uk", "santander.com", "santanderbank.com"], typoLabels: ["santander"] },
+  { name: "Halifax", kind: "company", keywords: ["halifax"], officialDomains: ["halifax.co.uk"] },
+  { name: "Monzo", kind: "company", keywords: ["monzo"], officialDomains: ["monzo.com"] },
+  { name: "Revolut", kind: "company", keywords: ["revolut"], substringKeywords: ["revolut"], officialDomains: ["revolut.com"], typoLabels: ["revolut"] },
+  { name: "RBC Royal Bank", kind: "company", keywords: ["rbc", "royalbank", "rbcroyalbank"], substringKeywords: ["royalbank"], officialDomains: ["rbc.com", "rbcroyalbank.com"] },
+  { name: "TD Bank", kind: "company", keywords: ["tdbank", "tdcanadatrust"], substringKeywords: ["tdbank", "tdcanadatrust"], officialDomains: ["td.com", "tdbank.com"] },
+  { name: "Scotiabank", kind: "company", keywords: ["scotiabank"], substringKeywords: ["scotiabank"], officialDomains: ["scotiabank.com"], typoLabels: ["scotiabank"] },
+  { name: "BMO", kind: "company", keywords: ["bmo"], officialDomains: ["bmo.com"] },
+  { name: "CIBC", kind: "company", keywords: ["cibc"], officialDomains: ["cibc.com"] },
+  { name: "Desjardins", kind: "company", keywords: ["desjardins"], substringKeywords: ["desjardins"], officialDomains: ["desjardins.com"], typoLabels: ["desjardins"] },
+  { name: "Interac", kind: "company", keywords: ["interac", "etransfer"], substringKeywords: ["interac"], officialDomains: ["interac.ca"], typoLabels: ["interac"] },
+  { name: "Commonwealth Bank", kind: "company", keywords: ["commbank", "netbank", "commonwealthbank"], substringKeywords: ["commbank"], officialDomains: ["commbank.com.au"], typoLabels: ["commbank"] },
+  { name: "Westpac", kind: "company", keywords: ["westpac"], substringKeywords: ["westpac"], officialDomains: ["westpac.com.au"], typoLabels: ["westpac"] },
+  { name: "ANZ", kind: "company", keywords: ["anz"], officialDomains: ["anz.com", "anz.com.au"] },
+  { name: "NAB", kind: "company", keywords: ["nab"], officialDomains: ["nab.com.au"] },
+  // Government (matched by official hostname suffix)
+  {
+    name: "a US government agency",
+    kind: "government",
+    keywords: ["irs", "ssa", "socialsecurity", "uscis", "treasury", "usgov", "fbi", "ftc"],
+    substringKeywords: ["socialsecurity"],
+    officialDomains: [],
+    officialSuffixes: ["gov"],
+  },
+  {
+    name: "a UK government service",
+    kind: "government",
+    keywords: ["govuk", "hmrc", "dvla", "dwp", "nhs"],
+    substringKeywords: ["govuk", "hmrc"],
+    officialDomains: [],
+    officialSuffixes: ["gov.uk", "nhs.uk", "nhs.net"],
+  },
+  {
+    name: "a Canadian government service",
+    kind: "government",
+    keywords: ["cra", "canadarevenue", "servicecanada"],
+    substringKeywords: ["canadarevenue", "servicecanada"],
+    officialDomains: ["canada.ca"],
+    officialSuffixes: ["gc.ca"],
+  },
+  {
+    name: "an Australian government service",
+    kind: "government",
+    keywords: ["mygov", "ato", "centrelink", "servicesaustralia", "medicare"],
+    substringKeywords: ["mygov", "centrelink", "servicesaustralia"],
+    officialDomains: ["my.gov.au"],
+    officialSuffixes: ["gov.au"],
+  },
+];
+
+/**
+ * Brand keywords that are also ordinary words or very short abbreviations.
+ * These only count as a brand reference when the hostname also contains a
+ * "lure" word such as login, verify or delivery (see LURE_TOKENS).
+ */
+export const AMBIGUOUS_KEYWORDS = new Set([
+  "apple", "chase", "citi", "halifax", "outlook", "treasury", "ups", "dhl", "dpd", "nab",
+  "anz", "bmo", "rbc", "ato", "cra", "ssa", "ftc", "fbi", "nhs", "dwp", "linkt", "evri",
+  "zelle", "venmo", "medicare", "lloyds", "irs",
+]);
+
+/** Words that scam hostnames commonly pair with a brand name. */
+export const LURE_TOKENS = new Set([
+  "login", "log", "logon", "signin", "sign", "verify", "verification", "validate", "secure",
+  "security", "account", "accounts", "support", "help", "helpdesk", "service", "services",
+  "update", "billing", "bill", "alert", "alerts", "auth", "wallet", "pay", "payment",
+  "payments", "refund", "refunds", "rebate", "confirm", "unlock", "recovery", "recover",
+  "id", "online", "banking", "bank", "portal", "track", "tracking", "delivery", "redelivery",
+  "parcel", "package", "post", "shipping", "customs", "fee", "fees", "toll", "tolls",
+  "claim", "reward", "rewards", "gift", "prize", "notice", "notification", "case", "member",
+  "customer", "care", "official", "my", "tax", "gov", "invoice", "reset", "suspended",
+  "locked", "access", "web", "app", "fraud", "protect", "protection",
+]);
+
+/** Hostname suffixes that indicate a government domain in the four supported countries. */
+export const GOVERNMENT_SUFFIXES = ["gov", "gov.uk", "gc.ca", "canada.ca", "gov.au"];
+
+/** Well-known URL shortening services. The destination of these links is hidden. */
+export const URL_SHORTENERS = new Set([
+  "bit.ly", "bitly.com", "tinyurl.com", "t.co", "ow.ly", "is.gd", "buff.ly", "rebrand.ly",
+  "cutt.ly", "shorturl.at", "rb.gy", "t.ly", "tiny.cc", "s.id", "v.gd", "bl.ink", "qrco.de",
+  "tr.im", "x.co", "soo.gd", "clck.ru", "u.to", "shorte.st", "adf.ly", "surl.li", "gg.gg",
+  "urlz.fr", "short.gy", "tiny.one", "dub.sh", "spoo.me", "kutt.it", "zpr.io", "shrtco.de",
+  "lnkd.in", "goo.gl",
+]);
+
+/** Links that open a chat with an unknown person rather than a web page. */
+export const MESSAGING_LINK_HOSTS = new Set([
+  "wa.me", "api.whatsapp.com", "chat.whatsapp.com", "t.me", "telegram.me", "m.me", "signal.me",
+]);
+
+/**
+ * Domain endings that are inexpensive to register and appear often in
+ * security-industry abuse reports. Many legitimate sites use them too, so
+ * this is only ever a weak signal.
+ */
+export const HIGH_ABUSE_TLDS = new Set([
+  "top", "xyz", "icu", "buzz", "cfd", "sbs", "bond", "vip", "click", "link", "rest",
+  "monster", "cyou", "lol", "quest", "mom", "beauty", "hair", "skin", "makeup", "autos",
+  "homes", "boats", "yachts", "zip", "mov", "win", "loan", "work", "tk", "ml", "ga",
+  "cf", "gq", "su", "pw", "cam", "fit", "kim", "date", "racing", "download", "stream",
+]);
+
+/** Free website and app hosting platforms where anyone can publish a page. */
+export const FREE_HOSTING_SUFFIXES = [
+  "github.io", "vercel.app", "netlify.app", "pages.dev", "workers.dev", "web.app",
+  "firebaseapp.com", "herokuapp.com", "azurewebsites.net", "blogspot.com", "wixsite.com",
+  "weebly.com", "square.site", "ngrok.io", "ngrok-free.app", "glitch.me", "repl.co",
+  "000webhostapp.com", "webflow.io", "framer.website", "godaddysites.com", "carrd.co",
+  "sites.google.com", "r2.dev", "onrender.com", "fly.dev",
+];
+
+/**
+ * Multi-part public suffixes used to find the "registrable" part of a domain.
+ * Simplified: the full Public Suffix List is far larger. Hosting platforms are
+ * included so that each site on them is treated as a separate owner.
+ */
+export const MULTI_PART_SUFFIXES = new Set([
+  "co.uk", "org.uk", "me.uk", "ltd.uk", "plc.uk", "net.uk", "sch.uk", "ac.uk", "gov.uk",
+  "nhs.uk", "police.uk", "mod.uk",
+  "com.au", "net.au", "org.au", "edu.au", "gov.au", "asn.au", "id.au",
+  "gc.ca", "ab.ca", "bc.ca", "mb.ca", "nb.ca", "nl.ca", "ns.ca", "nt.ca", "nu.ca", "on.ca",
+  "pe.ca", "qc.ca", "sk.ca", "yk.ca",
+  "co.nz", "org.nz", "net.nz", "govt.nz", "ac.nz",
+  "co.za", "com.br", "com.mx", "com.ar", "co.jp", "ne.jp", "or.jp", "co.in", "net.in",
+  "org.in", "gov.in", "com.cn", "com.hk", "com.sg", "com.my", "co.id", "com.tr", "com.ng",
+  "co.ke", "com.ph", "com.pk",
+  ...FREE_HOSTING_SUFFIXES,
+]);
+
+/** Free email providers. A personal mailbox is normal for people, unusual for companies. */
+export const FREE_EMAIL_DOMAINS = new Set([
+  "gmail.com", "googlemail.com", "yahoo.com", "yahoo.co.uk", "yahoo.ca", "yahoo.com.au",
+  "ymail.com", "rocketmail.com", "hotmail.com", "hotmail.co.uk", "hotmail.ca", "outlook.com",
+  "outlook.com.au", "live.com", "live.co.uk", "live.ca", "live.com.au", "msn.com", "aol.com",
+  "icloud.com", "me.com", "mac.com", "proton.me", "protonmail.com", "pm.me", "gmx.com",
+  "gmx.net", "gmx.co.uk", "mail.com", "yandex.com", "yandex.ru", "zoho.com", "tutanota.com",
+  "tuta.io", "btinternet.com", "sky.com", "virginmedia.com", "talktalk.net", "bigpond.com",
+  "optusnet.com.au", "shaw.ca", "rogers.com", "sympatico.ca", "comcast.net", "verizon.net",
+  "att.net", "inbox.com", "qq.com", "163.com",
+]);
+
+/** File extensions that install or run software when opened. */
+export const EXECUTABLE_EXTENSIONS = new Set([
+  "apk", "exe", "msi", "scr", "bat", "cmd", "ps1", "vbs", "vbe", "js", "jse", "jar", "hta",
+  "lnk", "iso", "img", "vhd", "dmg", "pkg", "appx", "msix", "xapk", "ipa", "mobileconfig",
+]);
+
+/** Archive and document types that can carry malicious content. */
+export const RISKY_DOCUMENT_EXTENSIONS = new Set([
+  "zip", "rar", "7z", "ace", "html", "htm", "shtml", "svg", "docm", "xlsm", "pptm", "xlam", "one",
+]);
