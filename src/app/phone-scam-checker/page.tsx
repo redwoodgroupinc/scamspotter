@@ -26,8 +26,8 @@ export default function PhoneScamCheckerPage() {
           </p>
           <Callout tone="info" className="mt-4">
             This tool checks the words of a message only. It can&rsquo;t identify a caller, look up who owns a phone
-            number or tell you whether a number is genuine. Caller ID can be faked to show any number, including a
-            real bank or government line.
+            number or tell you whether a number is genuine. Caller ID can be faked to show any number, including a real
+            bank or government line.
           </Callout>
         </>
       }
@@ -43,16 +43,15 @@ export default function PhoneScamCheckerPage() {
       howItWorks={
         <>
           <p>
-            Phone scams rely on a handful of scripts: an official-sounding caller, an alarming problem, pressure to
-            act before you hang up, and a request for money, a code or remote access to your device. The checker
-            looks for these patterns, including claims that your Social Security, Social Insurance or National
-            Insurance number has been suspended, threats of arrest, instructions to move money to a &ldquo;safe
-            account&rdquo;, requests to read out a one-time code, &ldquo;press 1&rdquo; robocalls and requests to
-            stay on the line.
+            Phone scams rely on a handful of scripts: an official-sounding caller, an alarming problem, pressure to act
+            before you hang up, and a request for money, a code or remote access to your device. The checker looks for
+            these patterns, including claims that your Social Security, Social Insurance or National Insurance number
+            has been suspended, threats of arrest, instructions to move money to a &ldquo;safe account&rdquo;, requests
+            to read out a one-time code, &ldquo;press 1&rdquo; robocalls and requests to stay on the line.
           </p>
           <p>
-            The analysis runs in your browser and nothing you type is sent to ScamSpotter. As with all our checkers,
-            a Low result doesn&rsquo;t mean a call was genuine.
+            The analysis runs in your browser and nothing you type is sent to ScamSpotter. As with all our checkers, a
+            Low result doesn&rsquo;t mean a call was genuine.
           </p>
           <RuleList kind="phone" />
         </>
@@ -69,9 +68,7 @@ export default function PhoneScamCheckerPage() {
             If you can, call from a different phone, or wait a few minutes first. The Canadian Anti-Fraud Centre
             suggests waiting 10 minutes, because some scammers try to keep the line open.
           </li>
-          <li>
-            In the UK, you can dial 159 to be connected to most banks&rsquo; fraud teams safely.
-          </li>
+          <li>In the UK, you can dial 159 to be connected to most banks&rsquo; fraud teams safely.</li>
         </ol>
         <p>
           Our guide on{" "}

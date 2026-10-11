@@ -5,8 +5,7 @@ import { SITE } from "@/lib/site";
 
 export const metadata = pageMetadata({
   title: "Terms of Use",
-  description:
-    "The terms that apply when you use ScamSpotter's free scam-checking tools and scam prevention guides.",
+  description: "The terms that apply when you use ScamSpotter's free scam-checking tools and scam prevention guides.",
   path: "/terms",
 });
 
@@ -16,7 +15,12 @@ export default function TermsPage() {
       title="Terms of Use"
       path="/terms"
       updated={SITE.lastReviewed}
-      intro={<p>By using {SITE.domain}, you agree to these terms. Please read them alongside our disclaimer and privacy policy.</p>}
+      intro={
+        <p>
+          By using {SITE.domain}, you agree to these terms. Please read them alongside our disclaimer and privacy
+          policy.
+        </p>
+      }
     >
       <h2>What the service provides</h2>
       <p>

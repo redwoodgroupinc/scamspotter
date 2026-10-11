@@ -26,7 +26,8 @@ import type { UrlAnalysis, UrlCheck } from "./types";
 
 const INVISIBLE = /[­​-‏‪-‮⁠-⁤⁦-⁩﻿]/g;
 const WEB_SCHEME = /^(https?):\/\//i;
-const DANGEROUS_SCHEME = /^(javascript|data|vbscript|file|blob|about|chrome|intent|ftp|ws|wss|mailto|tel|sms|smsto|market|itms-services):/i;
+const DANGEROUS_SCHEME =
+  /^(javascript|data|vbscript|file|blob|about|chrome|intent|ftp|ws|wss|mailto|tel|sms|smsto|market|itms-services):/i;
 const OTHER_SCHEME = /^([a-z][a-z0-9+.-]*):\/\//i;
 const IPV4 = /^(?:\d{1,3}\.){3}\d{1,3}$/;
 
@@ -35,7 +36,12 @@ const TYPO_EXCLUSIONS = new Set(["finance", "interact", "revolt", "balance", "go
 
 export type ParseResult =
   | { ok: true; url: URL; schemeProvided: boolean; cleaned: string; defanged: boolean }
-  | { ok: false; reason: "empty" | "spaces" | "unsupported_scheme" | "invalid" | "incomplete"; scheme?: string; cleaned: string };
+  | {
+      ok: false;
+      reason: "empty" | "spaces" | "unsupported_scheme" | "invalid" | "incomplete";
+      scheme?: string;
+      cleaned: string;
+    };
 
 /** Turn "defanged" addresses from security reports (hxxp, [.]) back into normal form. */
 function refang(value: string): { value: string; changed: boolean } {
@@ -125,7 +131,10 @@ export function isOfficialForAnyBrand(hostname: string): boolean {
 
 /** Split text into lowercase letter-only tokens ("pay-pal1.com" -> ["pay", "pal", "com"]). */
 export function letterTokens(value: string): string[] {
-  return value.toLowerCase().split(/[^a-z]+/).filter(Boolean);
+  return value
+    .toLowerCase()
+    .split(/[^a-z]+/)
+    .filter(Boolean);
 }
 
 export interface BrandReference {
@@ -241,11 +250,15 @@ export function findLookalike(hostname: string): LookalikeMatch | null {
 function isPrivateIpv4(host: string): boolean {
   const parts = host.split(".").map(Number);
   const [a, b] = parts as [number, number];
-  return a === 10 || a === 127 || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) || (a === 169 && b === 254);
+  return (
+    a === 10 || a === 127 || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) || (a === 169 && b === 254)
+  );
 }
 
-const PATH_LURE = /(?:^|[^a-z])(log-?in|sign-?in|verify|verification|validate|account|update|secure|password|wallet|billing|unlock|confirm|webscr|auth|recovery|reset)(?:[^a-z]|$)/i;
-const REDIRECT_PARAM = /[?&](?:url|redirect|redirect_uri|redir|next|goto|target|dest|destination|continue|return|returnurl)=(?:https?|%68%74%74%70|http%3a)/i;
+const PATH_LURE =
+  /(?:^|[^a-z])(log-?in|sign-?in|verify|verification|validate|account|update|secure|password|wallet|billing|unlock|confirm|webscr|auth|recovery|reset)(?:[^a-z]|$)/i;
+const REDIRECT_PARAM =
+  /[?&](?:url|redirect|redirect_uri|redir|next|goto|target|dest|destination|continue|return|returnurl)=(?:https?|%68%74%74%70|http%3a)/i;
 
 function pushCheck(checks: UrlCheck[], check: UrlCheck): void {
   checks.push(check);
@@ -298,9 +311,10 @@ export function analyzeUrl(raw: string): UrlAnalysis | null {
 
   // 2. Host type
   if (isIp) {
-    const privateNote = !hostname.startsWith("[") && isPrivateIpv4(hostname)
-      ? " This address points to a device on a private or local network."
-      : "";
+    const privateNote =
+      !hostname.startsWith("[") && isPrivateIpv4(hostname)
+        ? " This address points to a device on a private or local network."
+        : "";
     pushCheck(checks, {
       id: "ip-address",
       label: "Uses a raw IP address instead of a name",
@@ -488,7 +502,8 @@ export function analyzeUrl(raw: string): UrlAnalysis | null {
       label: `Uses an unusual port (:${url.port})`,
       status: "warn",
       weight: 1,
-      detail: "Public websites rarely need a port number in the address. This is more common on test servers and compromised machines.",
+      detail:
+        "Public websites rarely need a port number in the address. This is more common on test servers and compromised machines.",
     });
   }
 
@@ -502,9 +517,7 @@ export function analyzeUrl(raw: string): UrlAnalysis | null {
   }
   const official = isOfficialForAnyBrand(hostname);
   if (!official && !lookalike && misused.length === 0) {
-    const pathBrand = findBrandReferences(decodedPath).find(
-      (reference) => !AMBIGUOUS_KEYWORDS.has(reference.keyword),
-    );
+    const pathBrand = findBrandReferences(decodedPath).find((reference) => !AMBIGUOUS_KEYWORDS.has(reference.keyword));
     if (pathBrand) {
       pushCheck(checks, {
         id: "path-brand",
@@ -533,7 +546,8 @@ export function analyzeUrl(raw: string): UrlAnalysis | null {
       label: "Contains another web address inside it",
       status: "warn",
       weight: 1,
-      detail: "Part of this link is another address. Links like this can forward you somewhere other than the site you see at the start.",
+      detail:
+        "Part of this link is another address. Links like this can forward you somewhere other than the site you see at the start.",
     });
   }
 
@@ -565,7 +579,8 @@ export function analyzeUrl(raw: string): UrlAnalysis | null {
       label: "Very long address",
       status: "info",
       weight: 0,
-      detail: "Long addresses are common (tracking codes, for example) but make it easier to hide the real domain. Focus on the part just before the first single slash.",
+      detail:
+        "Long addresses are common (tracking codes, for example) but make it easier to hide the real domain. Focus on the part just before the first single slash.",
     });
   }
 
@@ -587,16 +602,133 @@ export function analyzeUrl(raw: string): UrlAnalysis | null {
 }
 
 const COMMON_TLDS = [
-  "com", "net", "org", "info", "biz", "co", "io", "me", "us", "uk", "ca", "au", "nz", "ie",
-  "eu", "de", "fr", "es", "it", "nl", "in", "ru", "cn", "br", "mx", "gov", "edu", "app", "dev",
-  "ai", "ly", "gl", "gd", "to", "cc", "ws", "tv", "sh", "la", "im", "gg", "at", "be", "ch",
-  "se", "no", "dk", "fi", "pl", "pt", "gr", "tr", "za", "sg", "hk", "jp", "kr", "ph", "my",
-  "id", "vn", "th", "pk", "ng", "ke", "link", "click", "top", "xyz", "shop", "online", "site",
-  "club", "live", "store", "tech", "website", "space", "fun", "vip", "icu", "buzz", "cfd",
-  "sbs", "bond", "rest", "monster", "cyou", "lol", "help", "support", "page", "pro", "mobi",
-  "tk", "ml", "ga", "cf", "gq", "pw", "su", "win", "loan", "work", "life", "world", "today",
-  "center", "digital", "email", "network", "services", "agency", "finance", "money", "cash",
-  "credit", "delivery", "express", "quest", "cam", "fit", "kim", "date", "one", "new", "gs",
+  "com",
+  "net",
+  "org",
+  "info",
+  "biz",
+  "co",
+  "io",
+  "me",
+  "us",
+  "uk",
+  "ca",
+  "au",
+  "nz",
+  "ie",
+  "eu",
+  "de",
+  "fr",
+  "es",
+  "it",
+  "nl",
+  "in",
+  "ru",
+  "cn",
+  "br",
+  "mx",
+  "gov",
+  "edu",
+  "app",
+  "dev",
+  "ai",
+  "ly",
+  "gl",
+  "gd",
+  "to",
+  "cc",
+  "ws",
+  "tv",
+  "sh",
+  "la",
+  "im",
+  "gg",
+  "at",
+  "be",
+  "ch",
+  "se",
+  "no",
+  "dk",
+  "fi",
+  "pl",
+  "pt",
+  "gr",
+  "tr",
+  "za",
+  "sg",
+  "hk",
+  "jp",
+  "kr",
+  "ph",
+  "my",
+  "id",
+  "vn",
+  "th",
+  "pk",
+  "ng",
+  "ke",
+  "link",
+  "click",
+  "top",
+  "xyz",
+  "shop",
+  "online",
+  "site",
+  "club",
+  "live",
+  "store",
+  "tech",
+  "website",
+  "space",
+  "fun",
+  "vip",
+  "icu",
+  "buzz",
+  "cfd",
+  "sbs",
+  "bond",
+  "rest",
+  "monster",
+  "cyou",
+  "lol",
+  "help",
+  "support",
+  "page",
+  "pro",
+  "mobi",
+  "tk",
+  "ml",
+  "ga",
+  "cf",
+  "gq",
+  "pw",
+  "su",
+  "win",
+  "loan",
+  "work",
+  "life",
+  "world",
+  "today",
+  "center",
+  "digital",
+  "email",
+  "network",
+  "services",
+  "agency",
+  "finance",
+  "money",
+  "cash",
+  "credit",
+  "delivery",
+  "express",
+  "quest",
+  "cam",
+  "fit",
+  "kim",
+  "date",
+  "one",
+  "new",
+  "gs",
 ];
 
 const URL_IN_TEXT = new RegExp(

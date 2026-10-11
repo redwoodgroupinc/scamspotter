@@ -31,14 +31,14 @@ export default function WebsiteSafetyGuidePage() {
       intro={
         <>
           <p>
-            Enter a web address to run quick, local checks for common warning signs, such as a misspelled brand
-            name, a raw IP address, a shortened link or a government-sounding name on a non-government domain. Then
-            use the guide below to check the site properly.
+            Enter a web address to run quick, local checks for common warning signs, such as a misspelled brand name, a
+            raw IP address, a shortened link or a government-sounding name on a non-government domain. Then use the
+            guide below to check the site properly.
           </p>
           <Callout tone="info" className="mt-4" title="Preliminary indicators, not a verdict">
-            ScamSpotter does not visit, download or follow the address you enter, so it can&rsquo;t see the page
-            itself or check a reputation database. Results describe how the address is written. They can&rsquo;t
-            tell you that a site is safe, malware-free or fraudulent.
+            ScamSpotter does not visit, download or follow the address you enter, so it can&rsquo;t see the page itself
+            or check a reputation database. Results describe how the address is written. They can&rsquo;t tell you that
+            a site is safe, malware-free or fraudulent.
           </Callout>
         </>
       }
@@ -48,18 +48,18 @@ export default function WebsiteSafetyGuidePage() {
           <p>
             The address is parsed in your browser using the same rules browsers use. We then check its structure:
             whether it uses HTTPS, whether the host is a raw IP address, whether an &ldquo;@&rdquo; hides the real
-            destination, whether it&rsquo;s a known link shortener, whether it uses international characters that
-            can imitate familiar letters, and whether the domain resembles one of the banks, delivery companies,
-            government services and tech brands on our list.
+            destination, whether it&rsquo;s a known link shortener, whether it uses international characters that can
+            imitate familiar letters, and whether the domain resembles one of the banks, delivery companies, government
+            services and tech brands on our list.
           </p>
           <p>
-            Each warning sign has a documented weight, and the total gives a preliminary indicator level of Low,
-            Medium or High. Shortened links are always marked as &ldquo;destination hidden&rdquo;, because we
-            deliberately don&rsquo;t follow them.
+            Each warning sign has a documented weight, and the total gives a preliminary indicator level of Low, Medium
+            or High. Shortened links are always marked as &ldquo;destination hidden&rdquo;, because we deliberately
+            don&rsquo;t follow them.
           </p>
           <p>
-            Our brand list is small and our domain-suffix list is simplified, so a missing warning doesn&rsquo;t
-            mean an address is genuine. See{" "}
+            Our brand list is small and our domain-suffix list is simplified, so a missing warning doesn&rsquo;t mean an
+            address is genuine. See{" "}
             <Link href="/how-it-works" className="text-link">
               how ScamSpotter works
             </Link>{" "}
@@ -76,7 +76,9 @@ export default function WebsiteSafetyGuidePage() {
         </p>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[32rem] border-collapse text-left text-base">
-            <caption className="sr-only">Parts of the example address https://login.example.co.uk/account/verify</caption>
+            <caption className="sr-only">
+              Parts of the example address https://login.example.co.uk/account/verify
+            </caption>
             <thead>
               <tr className="border-b-2 border-navy-200">
                 <th scope="col" className="py-2 pr-4">
@@ -106,18 +108,18 @@ export default function WebsiteSafetyGuidePage() {
 
       <ContentSection id="https-heading" title="Why the padlock isn't proof">
         <p>
-          HTTPS and the padlock icon mean your connection to the site is encrypted, so others on the network
-          can&rsquo;t read what you send. They don&rsquo;t mean the site is honest. Certificates are free and quick to
-          get, and phishing sites routinely use them. Treat a missing HTTPS connection as a reason not to enter
-          details, but never treat HTTPS as a reason to trust a site.
+          HTTPS and the padlock icon mean your connection to the site is encrypted, so others on the network can&rsquo;t
+          read what you send. They don&rsquo;t mean the site is honest. Certificates are free and quick to get, and
+          phishing sites routinely use them. Treat a missing HTTPS connection as a reason not to enter details, but
+          never treat HTTPS as a reason to trust a site.
         </p>
       </ContentSection>
 
       <ContentSection id="verify-site-heading" title="How to check a website before you trust it">
         <ol>
           <li>
-            <strong>Get there yourself.</strong> Type the organisation&rsquo;s address or use a bookmark or its
-            official app, rather than following a link from a message or advert.
+            <strong>Get there yourself.</strong> Type the organisation&rsquo;s address or use a bookmark or its official
+            app, rather than following a link from a message or advert.
           </li>
           <li>
             <strong>Look up the domain&rsquo;s age.</strong>{" "}
@@ -125,8 +127,8 @@ export default function WebsiteSafetyGuidePage() {
               ICANN Lookup
               <ExternalLink className="h-4 w-4" aria-hidden="true" />
             </a>{" "}
-            shows registration data for many domains, often including the creation date. A shop or bank that
-            registered its domain a few weeks ago deserves extra caution.
+            shows registration data for many domains, often including the creation date. A shop or bank that registered
+            its domain a few weeks ago deserves extra caution.
           </li>
           <li>
             <strong>Check known-unsafe lists.</strong> Google&rsquo;s{" "}
@@ -142,8 +144,8 @@ export default function WebsiteSafetyGuidePage() {
             &ldquo;scam&rdquo; or &ldquo;complaints&rdquo;, and don&rsquo;t rely on reviews shown on the site itself.
           </li>
           <li>
-            <strong>Check contact details and policies.</strong> Look for a real address, a working phone number,
-            clear returns terms and a privacy policy. Missing or copied details are warning signs.
+            <strong>Check contact details and policies.</strong> Look for a real address, a working phone number, clear
+            returns terms and a privacy policy. Missing or copied details are warning signs.
           </li>
           <li>
             <strong>Watch how it asks you to pay.</strong> Bank transfers, crypto and gift cards offer little
@@ -170,8 +172,8 @@ export default function WebsiteSafetyGuidePage() {
             service.
           </li>
           <li>
-            <strong>US:</strong> report scams to the FTC at ReportFraud.ftc.gov, and to the FBI&rsquo;s IC3 if you
-            lost money online.
+            <strong>US:</strong> report scams to the FTC at ReportFraud.ftc.gov, and to the FBI&rsquo;s IC3 if you lost
+            money online.
           </li>
           <li>
             <strong>Canada:</strong> report to the Canadian Anti-Fraud Centre.

@@ -32,10 +32,54 @@ export interface NormalizedText {
 }
 
 const COMMON_ENGLISH_WORDS = new Set([
-  "the", "and", "you", "your", "to", "is", "of", "for", "a", "an", "in", "on", "this",
-  "that", "we", "our", "please", "it", "be", "are", "with", "will", "have", "has", "can",
-  "if", "or", "not", "at", "from", "by", "my", "me", "i", "us", "account", "click", "here",
-  "now", "today", "send", "pay", "call", "hi", "hello", "dear", "thanks", "thank",
+  "the",
+  "and",
+  "you",
+  "your",
+  "to",
+  "is",
+  "of",
+  "for",
+  "a",
+  "an",
+  "in",
+  "on",
+  "this",
+  "that",
+  "we",
+  "our",
+  "please",
+  "it",
+  "be",
+  "are",
+  "with",
+  "will",
+  "have",
+  "has",
+  "can",
+  "if",
+  "or",
+  "not",
+  "at",
+  "from",
+  "by",
+  "my",
+  "me",
+  "i",
+  "us",
+  "account",
+  "click",
+  "here",
+  "now",
+  "today",
+  "send",
+  "pay",
+  "call",
+  "hi",
+  "hello",
+  "dear",
+  "thanks",
+  "thank",
 ]);
 
 const MIXED_SCRIPT_WORD = /[\p{L}\p{M}]+/gu;
@@ -79,10 +123,7 @@ export function normalizeText(input: string): NormalizedText {
     .replace(/ {2,}/g, " ");
 
   const words = text.toLowerCase().match(/[a-z']+/g) ?? [];
-  const englishHits = words.reduce(
-    (count, word) => count + (COMMON_ENGLISH_WORDS.has(word) ? 1 : 0),
-    0,
-  );
+  const englishHits = words.reduce((count, word) => count + (COMMON_ENGLISH_WORDS.has(word) ? 1 : 0), 0);
 
   return {
     text,

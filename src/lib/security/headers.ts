@@ -56,16 +56,12 @@ export function buildContentSecurityPolicy({
     "worker-src": ["'self'"],
   };
 
-  const policy = Object.entries(directives).map(
-    ([name, values]) => `${name} ${values.join(" ")}`,
-  );
+  const policy = Object.entries(directives).map(([name, values]) => `${name} ${values.join(" ")}`);
   if (!isDev) policy.push("upgrade-insecure-requests");
   return policy.join("; ");
 }
 
-export function buildSecurityHeaders(
-  options: SecurityHeaderOptions,
-): { key: string; value: string }[] {
+export function buildSecurityHeaders(options: SecurityHeaderOptions): { key: string; value: string }[] {
   const headers = [
     { key: "Content-Security-Policy", value: buildContentSecurityPolicy(options) },
     { key: "X-Content-Type-Options", value: "nosniff" },

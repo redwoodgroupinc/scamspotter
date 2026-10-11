@@ -66,3 +66,14 @@ export function getAdsConfig(): AdsConfig {
     NEXT_PUBLIC_ADSENSE_SLOT_HOME: process.env.NEXT_PUBLIC_ADSENSE_SLOT_HOME,
   });
 }
+
+/**
+ * Contents of /ads.txt for a configured publisher ID, or null when ads are not
+ * configured. "f08c47fec0942fa0" is Google's published certification
+ * authority ID for AdSense ads.txt entries.
+ */
+export function buildAdsTxt(client: string | null): string | null {
+  if (!isValidAdClient(client)) return null;
+  const publisherId = client.trim().replace(/^ca-/, "");
+  return `google.com, ${publisherId}, DIRECT, f08c47fec0942fa0\n`;
+}

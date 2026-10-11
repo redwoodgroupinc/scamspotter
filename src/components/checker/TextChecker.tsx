@@ -25,12 +25,15 @@ import { prefersReducedMotion, useHydrated } from "./useHydrated";
 
 export function PrivacyReminder({ id }: { id: string }) {
   return (
-    <div id={id} className="mb-5 flex gap-3 rounded-xl border border-navy-200 bg-navy-50 p-4 text-sm leading-relaxed text-navy-900">
+    <div
+      id={id}
+      className="mb-5 flex gap-3 rounded-xl border border-navy-200 bg-navy-50 p-4 text-sm leading-relaxed text-navy-900"
+    >
       <Lock className="mt-0.5 h-5 w-5 shrink-0 text-navy-700" aria-hidden="true" />
       <p>
         <span className="font-semibold">Before you paste: </span>
-        remove passwords, verification codes, bank or card details, ID numbers and other personal information. The
-        check runs in your browser and your text isn&rsquo;t sent to or stored by ScamSpotter.
+        remove passwords, verification codes, bank or card details, ID numbers and other personal information. The check
+        runs in your browser and your text isn&rsquo;t sent to or stored by ScamSpotter.
       </p>
     </div>
   );
@@ -98,7 +101,7 @@ export function TextChecker({
       `Check complete. Warning-sign level: ${RISK_LABELS[outcome.riskLevel]}. ${count} warning sign${count === 1 ? "" : "s"} found. Results follow the form.`,
     );
     requestAnimationFrame(() => {
-      resultsRef.current?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
+      resultsRef.current?.scrollIntoView?.({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
     });
   }
 
@@ -194,7 +197,11 @@ export function TextChecker({
         )}
 
         {error && (
-          <p id={errorId} role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 font-medium text-red-800">
+          <p
+            id={errorId}
+            role="alert"
+            className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 font-medium text-red-800"
+          >
             {error}
           </p>
         )}

@@ -9,13 +9,7 @@
 import { FREE_EMAIL_DOMAINS, HIGH_ABUSE_TLDS } from "./domains";
 import { MAX_SENDER_LENGTH } from "./limits";
 import type { SenderAnalysis, SenderObservation } from "./types";
-import {
-  findBrandReferences,
-  findLookalike,
-  getRegistrableDomain,
-  isOfficialFor,
-  letterTokens,
-} from "./url-analysis";
+import { findBrandReferences, findLookalike, getRegistrableDomain, isOfficialFor, letterTokens } from "./url-analysis";
 
 const ADDRESS_PATTERN = /^[^\s@<>()",;:]+@[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+$/i;
 const EMBEDDED_ADDRESS = /[^\s@<>()",;:]+@[a-z0-9-]+(?:\.[a-z0-9-]+)+/i;
@@ -28,10 +22,16 @@ export interface ParsedSender {
 
 /** Accepts "Name <user@example.com>", "<user@example.com>" or "user@example.com". */
 export function parseSender(raw: string): ParsedSender {
-  const value = raw.replace(/[​-‏⁠﻿]/g, "").trim().slice(0, MAX_SENDER_LENGTH);
+  const value = raw
+    .replace(/[​-‏⁠﻿]/g, "")
+    .trim()
+    .slice(0, MAX_SENDER_LENGTH);
   const angle = value.match(/^(.*?)<\s*([^<>\s]+)\s*>\s*$/);
   if (angle) {
-    const displayName = angle[1]!.trim().replace(/^["']|["']$/g, "").trim();
+    const displayName = angle[1]!
+      .trim()
+      .replace(/^["']|["']$/g, "")
+      .trim();
     return { displayName: displayName || null, address: angle[2]!.trim() };
   }
   return { displayName: null, address: value || null };
@@ -54,7 +54,8 @@ export function analyzeSender(raw: string, options: { bodyMentionsOrganisation?:
           id: "sender-invalid",
           label: "Couldn't read the sender address",
           status: "info",
-          detail: "Enter the full address, for example name@example.com. You can also paste it as Name <name@example.com>.",
+          detail:
+            "Enter the full address, for example name@example.com. You can also paste it as Name <name@example.com>.",
         },
       ],
     };
@@ -78,9 +79,7 @@ export function analyzeSender(raw: string, options: { bodyMentionsOrganisation?:
 
   // Brand or organisation named in the display name / mailbox name
   const nameText = `${displayName ?? ""} ${localPart}`;
-  const nameBrands = findBrandReferences(nameText).filter(
-    (reference) => !isOfficialFor(reference.brand, domain),
-  );
+  const nameBrands = findBrandReferences(nameText).filter((reference) => !isOfficialFor(reference.brand, domain));
   const claimsOrganisation = nameBrands.length > 0 || Boolean(options.bodyMentionsOrganisation);
 
   const lookalike = findLookalike(domain);

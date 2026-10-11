@@ -27,7 +27,9 @@ export default function PrivacyPolicyPage() {
     >
       <h2>The short version</h2>
       <ul>
-        <li>You don&rsquo;t need an account, and we don&rsquo;t ask for your name or contact details to use the tools.</li>
+        <li>
+          You don&rsquo;t need an account, and we don&rsquo;t ask for your name or contact details to use the tools.
+        </li>
         <li>
           The text, email addresses and web addresses you check are analysed by JavaScript running in your own browser.
           They are not sent to ScamSpotter&rsquo;s servers, stored, logged or shared with an AI service.
@@ -72,8 +74,8 @@ export default function PrivacyPolicyPage() {
       </p>
       <p>
         Our fonts and scripts are served from our own domain, so loading a page doesn&rsquo;t contact third-party font
-        or analytics services. We don&rsquo;t currently use any analytics or visitor-tracking tools. If that changes,
-        we will update this policy first.
+        or analytics services. We don&rsquo;t currently use any analytics or visitor-tracking tools. If that changes, we
+        will update this policy first.
       </p>
 
       <h2>Advertising</h2>
@@ -97,8 +99,8 @@ export default function PrivacyPolicyPage() {
             , which also describe how to control ad personalisation.
           </p>
           <p>
-            Where the law requires consent for advertising cookies (for example in the UK and European Economic Area),
-            a consent message is shown before personalised advertising is used, and you can change your choice later.
+            Where the law requires consent for advertising cookies (for example in the UK and European Economic Area), a
+            consent message is shown before personalised advertising is used, and you can change your choice later.
           </p>
         </>
       ) : (
@@ -119,15 +121,15 @@ export default function PrivacyPolicyPage() {
 
       <h2>If you contact us</h2>
       <p>
-        If you email us, we receive your email address and whatever you include in your message. We use it only to
-        read and respond to your message and to improve the site, and we don&rsquo;t add you to mailing lists. Please
+        If you email us, we receive your email address and whatever you include in your message. We use it only to read
+        and respond to your message and to improve the site, and we don&rsquo;t add you to mailing lists. Please
         don&rsquo;t send sensitive personal information.
       </p>
 
       <h2>Links to other websites</h2>
       <p>
-        Our guides link to government agencies and other organisations. Their websites have their own privacy
-        policies, which apply when you visit them.
+        Our guides link to government agencies and other organisations. Their websites have their own privacy policies,
+        which apply when you visit them.
       </p>
 
       <h2>Children</h2>

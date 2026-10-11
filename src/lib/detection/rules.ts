@@ -198,8 +198,14 @@ export const TEXT_RULES: readonly TextRule[] = [
     appliesTo: COMMS,
     negatable: true,
     patterns: [
-      new RegExp(String.raw`\b(?:can|could) you (?:please )?(?:send|lend|transfer|pay|loan|wire)\b[^.!?\n]{0,30}(?:\bmoney\b|\bme\b|\bcash\b|\bfunds\b|${MONEY}|\d)`, "gi"),
-      new RegExp(String.raw`\b(?:i|we) need (?:you to )?(?:send|transfer|pay)\b[^.!?\n]{0,30}(?:\bmoney\b|${MONEY}|\d|\bcash\b|\bfunds\b)`, "gi"),
+      new RegExp(
+        String.raw`\b(?:can|could) you (?:please )?(?:send|lend|transfer|pay|loan|wire)\b[^.!?\n]{0,30}(?:\bmoney\b|\bme\b|\bcash\b|\bfunds\b|${MONEY}|\d)`,
+        "gi",
+      ),
+      new RegExp(
+        String.raw`\b(?:i|we) need (?:you to )?(?:send|transfer|pay)\b[^.!?\n]{0,30}(?:\bmoney\b|${MONEY}|\d|\bcash\b|\bfunds\b)`,
+        "gi",
+      ),
       /\bneed (?:some |the )?(?:money|cash|funds) (?:urgently|asap|today|now|right away|immediately|tonight)\b/gi,
       /\b(?:send|transfer)\b[^.!?\n]{0,20}\b(?:money|funds|the payment)\b[^.!?\n]{0,30}\b(?:urgently|asap|today|now|immediately|right away|tonight)\b/gi,
     ],
@@ -355,7 +361,10 @@ export const TEXT_RULES: readonly TextRule[] = [
     group: "story",
     appliesTo: COMMS,
     patterns: [
-      new RegExp(String.raw`\b(?:order|purchase|subscription|payment|charge|transaction|renewal|invoice)\b[^.!?\n]{0,40}${MONEY}\s?\d[\d,]*(?:\.\d{2})?[^.!?\n]{0,80}\b(?:if you did not|if you didn'?t|if this wasn'?t you|not you|to cancel|cancel this|dispute|call us|contact us)\b`, "gi"),
+      new RegExp(
+        String.raw`\b(?:order|purchase|subscription|payment|charge|transaction|renewal|invoice)\b[^.!?\n]{0,40}${MONEY}\s?\d[\d,]*(?:\.\d{2})?[^.!?\n]{0,80}\b(?:if you did not|if you didn'?t|if this wasn'?t you|not you|to cancel|cancel this|dispute|call us|contact us)\b`,
+        "gi",
+      ),
       /\b(?:auto[- ]?renew(?:al|ed)?|renewal|subscription)\b[^.!?\n]{0,60}\b(?:call|contact|reply)\b[^.!?\n]{0,30}\b(?:cancel|refund|dispute)\b/gi,
     ],
     explanation:
@@ -689,9 +698,7 @@ export const TEXT_RULES: readonly TextRule[] = [
     severity: "weak",
     group: "callback",
     appliesTo: COMMS,
-    patterns: [
-      /\b(?:call|ring|phone|contact)\b[^.!?\n]{0,30}\b(?:on|at)\s?\+?[\d(][\d\s().-]{6,18}\d/gi,
-    ],
+    patterns: [/\b(?:call|ring|phone|contact)\b[^.!?\n]{0,30}\b(?:on|at)\s?\+?[\d(][\d\s().-]{6,18}\d/gi],
     explanation:
       "Scammers often provide their own 'helpline' number. If you need to call an organisation, use a number from its official website, a statement or the back of your card, not the number in the message.",
   },
@@ -707,7 +714,10 @@ export const TEXT_RULES: readonly TextRule[] = [
     negatable: true,
     patterns: [
       /\b(?:pay|paying|send|deposit|transfer)\b[^.!?\n]{0,25}\b(?:registration|application|training|onboarding|processing|placement|recruitment|enrol(?:l)?ment|membership|starter kit|background (?:check|screening)|dbs(?: check)?|police check|criminal record check|certification|uniform|equipment|admin(?:istration)?|security|activation|refundable|small|one[- ]time)\s(?:fees?|costs?|charges?|payments?|deposits?)\b/gi,
-      new RegExp(String.raw`\b(?:registration|application|training|onboarding|processing|placement|recruitment|starter kit|background check|dbs|uniform|equipment|activation) (?:fees?|costs?|charges?|deposits?) (?:of|is|will be|:)\s?(?:${MONEY}|\d)`, "gi"),
+      new RegExp(
+        String.raw`\b(?:registration|application|training|onboarding|processing|placement|recruitment|starter kit|background check|dbs|uniform|equipment|activation) (?:fees?|costs?|charges?|deposits?) (?:of|is|will be|:)\s?(?:${MONEY}|\d)`,
+        "gi",
+      ),
       /\b(?:registration|application|training|onboarding|processing|activation|starter|admin(?:istration)?|enrol(?:l)?ment|membership|background check)\b[^.!?\n]{0,15}\b(?:fees?|deposits?|payments?|charges?)\b[^.!?\n]{0,30}\b(?:required|needed|mandatory|necessary|payable)\b/gi,
       /\b(?:you|candidates?|applicants?|new (?:hires?|starters?|employees?)) (?:must|will (?:need to|have to)|need to|have to|are required to) (?:first )?(?:pay|purchase|buy|deposit|send money)\b/gi,
     ],
@@ -815,7 +825,10 @@ export const TEXT_RULES: readonly TextRule[] = [
     appliesTo: JOB,
     patterns: [
       /\b(?:easy money|quick money|fast cash|make money from home|be your own boss|unlimited earning(?:s| potential)?|financial freedom|guaranteed (?:income|salary|pay|earnings)|work (?:just|only) \d{1,2} (?:hours?|minutes?|mins?) (?:a|per) day)\b/gi,
-      new RegExp(String.raw`\bearn (?:up to |over |more than )?${MONEY}\s?\d[\d,]*\+? ?(?:daily|a day|per day|weekly|a week|per week)\b`, "gi"),
+      new RegExp(
+        String.raw`\bearn (?:up to |over |more than )?${MONEY}\s?\d[\d,]*\+? ?(?:daily|a day|per day|weekly|a week|per week)\b`,
+        "gi",
+      ),
     ],
     explanation:
       "Job ads that focus on how much and how easily you'll earn, rather than on the actual work, are typical of scams and pyramid-style schemes.",

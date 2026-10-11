@@ -7,8 +7,7 @@ const BY_CATEGORY: Partial<Record<FindingCategory, string>> = {
     "Don't send ID numbers, bank details or photos of documents in reply to a message or call you didn't expect.",
   payment:
     "Don't send money, gift cards or crypto until you've confirmed the request through a contact method you already trust.",
-  link:
-    "Don't open the link. To check an account, type the organisation's web address into your browser yourself or use its official app.",
+  link: "Don't open the link. To check an account, type the organisation's web address into your browser yourself or use its official app.",
   impersonation:
     "Contact the organisation using details from its official website, a statement or the back of your card, not the contact details in the message.",
   software:
@@ -19,11 +18,11 @@ const BY_CATEGORY: Partial<Record<FindingCategory, string>> = {
   threat:
     "Don't let threats rush you. Agencies and companies have formal processes and won't demand instant payment by message or phone.",
   lure: "If you didn't enter a competition or expect a refund, delivery or payment, assume the offer isn't real until you've checked it independently.",
-  sender: "Look closely at the full sender address, not just the display name, and remember that addresses can be forged.",
+  sender:
+    "Look closely at the full sender address, not just the display name, and remember that addresses can be forged.",
   contact:
     "If the message claims to be from someone you know, call them on the number you already have before doing anything it asks.",
-  obfuscation:
-    "Hidden or look-alike characters are used to slip past filters. Treat the message with extra caution.",
+  obfuscation: "Hidden or look-alike characters are used to slip past filters. Treat the message with extra caution.",
 };
 
 const BY_KIND: Record<CheckerKind, string[]> = {
@@ -50,11 +49,7 @@ const ALWAYS = [
   "Report the scam using the official reporting options for your country (listed below).",
 ];
 
-export function buildRecommendations(
-  kind: CheckerKind,
-  riskLevel: RiskLevel,
-  findings: readonly Finding[],
-): string[] {
+export function buildRecommendations(kind: CheckerKind, riskLevel: RiskLevel, findings: readonly Finding[]): string[] {
   const recommendations: string[] = [];
 
   if (findings.length === 0) {

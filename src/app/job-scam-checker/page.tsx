@@ -19,8 +19,8 @@ export default function JobScamCheckerPage() {
       heading="Job Scam Checker"
       intro={
         <p>
-          Paste a job advert, a recruiter&rsquo;s message or a job offer to check it for the warning signs that show
-          up again and again in employment scams, then verify the employer independently before you share anything.
+          Paste a job advert, a recruiter&rsquo;s message or a job offer to check it for the warning signs that show up
+          again and again in employment scams, then verify the employer independently before you share anything.
         </p>
       }
       checker={
@@ -36,10 +36,10 @@ export default function JobScamCheckerPage() {
         <>
           <p>
             Job scams follow recognisable scripts. This checker looks for requests to pay registration, training or
-            equipment fees; cheques sent to &ldquo;buy equipment&rdquo; from a particular supplier; interviews held
-            only over Telegram, WhatsApp or text; requests for your bank details or identity documents before
-            you&rsquo;ve had a real interview; pressure to accept immediately; and roles that involve moving money or
-            parcels for someone else.
+            equipment fees; cheques sent to &ldquo;buy equipment&rdquo; from a particular supplier; interviews held only
+            over Telegram, WhatsApp or text; requests for your bank details or identity documents before you&rsquo;ve
+            had a real interview; pressure to accept immediately; and roles that involve moving money or parcels for
+            someone else.
           </p>
           <p>
             It also flags pay that looks unrealistic for the work described. We only raise this when the advert also
@@ -58,12 +58,12 @@ export default function JobScamCheckerPage() {
       <ContentSection id="verify-heading" title="How to verify an employer independently">
         <ol>
           <li>
-            <strong>Find the company yourself.</strong> Search for its official website rather than using links in
-            the message, and check that the job appears on its own careers page.
+            <strong>Find the company yourself.</strong> Search for its official website rather than using links in the
+            message, and check that the job appears on its own careers page.
           </li>
           <li>
-            <strong>Contact HR through official channels.</strong> Call the main number listed on the official
-            website and ask whether the recruiter works there and the role is real.
+            <strong>Contact HR through official channels.</strong> Call the main number listed on the official website
+            and ask whether the recruiter works there and the role is real.
           </li>
           <li>
             <strong>Check the recruiter&rsquo;s email domain.</strong> A real recruiter for a large company normally
@@ -74,8 +74,8 @@ export default function JobScamCheckerPage() {
             &ldquo;complaint&rdquo;.
           </li>
           <li>
-            <strong>Never pay to start a job.</strong> Genuine employers don&rsquo;t charge for training, equipment
-            or background checks, and won&rsquo;t ask you to deposit a cheque and send money on.
+            <strong>Never pay to start a job.</strong> Genuine employers don&rsquo;t charge for training, equipment or
+            background checks, and won&rsquo;t ask you to deposit a cheque and send money on.
           </li>
         </ol>
         <p>

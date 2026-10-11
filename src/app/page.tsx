@@ -1,4 +1,4 @@
-import { ArrowRight, EyeOff, ListChecks, ShieldAlert } from "lucide-react";
+import { ArrowRight, CheckCircle2, EyeOff, ListChecks, ShieldAlert } from "lucide-react";
 import Link from "next/link";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { TextChecker } from "@/components/checker/TextChecker";
@@ -21,6 +21,15 @@ export const metadata = pageMetadata({
   path: "/",
   absoluteTitle: true,
 });
+
+const CHECKS_FOR = [
+  "Requests for one-time codes, passwords or PINs",
+  "Gift card, crypto, wire transfer and 'safe account' payments",
+  "Deadlines, threats and account-suspension warnings",
+  "Pretending to be a bank, delivery company or government agency",
+  "Lookalike, shortened and disguised links",
+  "Requests to install apps or allow remote access",
+];
 
 const FAQS = [
   {
@@ -60,32 +69,56 @@ export default function HomePage() {
   return (
     <>
       <section className="border-b border-navy-100 bg-gradient-to-b from-navy-50 to-white">
-        <Container className="py-10 sm:py-14">
-          <div className="max-w-3xl">
-            <p className="eyebrow">{SITE.tagline}</p>
-            <h1 className="mt-3 text-4xl font-bold tracking-tight text-navy-950 sm:text-5xl">
-              Is It a Scam? Find the Warning Signs.
-            </h1>
-            <p className="mt-5 text-lg leading-relaxed text-navy-700 sm:text-xl">
-              Paste a suspicious text, WhatsApp or social media message to check it for the tactics scammers use most,
-              and learn how to recognise common fraud before it costs you. Free, private and explained in plain
-              English.
-            </p>
+        <Container className="grid gap-10 py-10 sm:py-14 lg:grid-cols-[minmax(0,48rem)_minmax(0,22rem)] lg:justify-between">
+          <div>
+            <div className="max-w-3xl">
+              <p className="eyebrow">{SITE.tagline}</p>
+              <h1 className="mt-3 text-4xl font-bold tracking-tight text-navy-950 sm:text-5xl">
+                Is It a Scam? Find the Warning Signs.
+              </h1>
+              <p className="mt-5 text-lg leading-relaxed text-navy-700 sm:text-xl">
+                Paste a suspicious text, WhatsApp or social media message to check it for the tactics scammers use most,
+                and learn how to recognise common fraud before it costs you. Free, private and explained in plain
+                English.
+              </p>
+            </div>
+            <div className="mt-8 max-w-3xl">
+              <TextChecker
+                kind="message"
+                inputLabel="Paste a suspicious message"
+                inputHint="Texts, WhatsApp, Messenger or social media messages. Use our other checkers for emails, job offers and web addresses."
+                placeholder="For example: Your account has been locked. Verify your details within 24 hours at…"
+                examples={TEXT_EXAMPLES.message}
+              />
+            </div>
+            <Callout tone="info" className="mt-6 max-w-3xl" title="What this checker can and can't do">
+              ScamSpotter looks for common warning signs using transparent, local rules. It isn&rsquo;t a trained AI
+              model or a scam database, it can&rsquo;t prove that a message is genuine, and a Low result never means
+              something is safe. If in doubt, contact the organisation using details you find yourself.
+            </Callout>
           </div>
-          <div className="mt-8 max-w-3xl">
-            <TextChecker
-              kind="message"
-              inputLabel="Paste a suspicious message"
-              inputHint="Texts, WhatsApp, Messenger or social media messages. Use our other checkers for emails, job offers and web addresses."
-              placeholder="For example: Your account has been locked. Verify your details within 24 hours at…"
-              examples={TEXT_EXAMPLES.message}
-            />
-          </div>
-          <Callout tone="info" className="mt-6 max-w-3xl" title="What this checker can and can't do">
-            ScamSpotter looks for common warning signs using transparent, local rules. It isn&rsquo;t a trained AI
-            model or a scam database, it can&rsquo;t prove that a message is genuine, and a Low result never means
-            something is safe. If in doubt, contact the organisation using details you find yourself.
-          </Callout>
+          <aside aria-labelledby="checks-for-heading" className="lg:pt-40">
+            <div className="card lg:sticky lg:top-6">
+              <h2 id="checks-for-heading" className="text-lg font-semibold text-navy-950">
+                What the checker looks for
+              </h2>
+              <ul className="mt-4 space-y-3 text-[0.95rem] text-navy-800">
+                {CHECKS_FOR.map((item) => (
+                  <li key={item} className="flex gap-2.5">
+                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" aria-hidden="true" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-5 border-t border-navy-100 pt-4 text-sm leading-relaxed text-navy-700">
+                Every rule and weight is published, and nothing you paste leaves your browser.
+              </p>
+              <Link href="/how-it-works" className="btn-quiet mt-2 -ml-3">
+                See all the rules
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </div>
+          </aside>
         </Container>
       </section>
 
@@ -111,8 +144,8 @@ export default function HomePage() {
               <ListChecks className="h-8 w-8 text-brand-600" aria-hidden="true" />
               <h3 className="mt-3 text-lg font-semibold text-navy-950">Transparent rules</h3>
               <p className="mt-2 text-navy-700">
-                Every warning sign we look for is published with its weight, so you can see exactly why a message
-                scored the way it did.
+                Every warning sign we look for is published with its weight, so you can see exactly why a message scored
+                the way it did.
               </p>
             </li>
             <li className="card">
@@ -127,8 +160,8 @@ export default function HomePage() {
               <ShieldAlert className="h-8 w-8 text-brand-600" aria-hidden="true" />
               <h3 className="mt-3 text-lg font-semibold text-navy-950">Honest about limits</h3>
               <p className="mt-2 text-navy-700">
-                We point out warning signs and next steps. We never claim a message is definitely safe or definitely
-                a scam.
+                We point out warning signs and next steps. We never claim a message is definitely safe or definitely a
+                scam.
               </p>
             </li>
           </ul>
@@ -164,11 +197,7 @@ export default function HomePage() {
                 <ul className="mt-3 flex-1 space-y-3 text-sm">
                   {country.reporting.slice(0, 2).map((channel) => (
                     <li key={channel.name}>
-                      <a
-                        href={requireSource(channel.source).url}
-                        rel="noopener noreferrer"
-                        className="text-link"
-                      >
+                      <a href={requireSource(channel.source).url} rel="noopener noreferrer" className="text-link">
                         {channel.name}
                       </a>
                       <p className="mt-0.5 text-navy-700">{channel.useFor}</p>
@@ -206,9 +235,9 @@ export default function HomePage() {
           </h2>
           <div className="mt-3 space-y-3 leading-relaxed text-navy-800">
             <p>
-              ScamSpotter doesn&rsquo;t require an account and doesn&rsquo;t store the text you check. We still ask
-              you to remove passwords, one-time codes, bank and card details and ID numbers before pasting anything,
-              because you should never need to share those to check a message.
+              ScamSpotter doesn&rsquo;t require an account and doesn&rsquo;t store the text you check. We still ask you
+              to remove passwords, one-time codes, bank and card details and ID numbers before pasting anything, because
+              you should never need to share those to check a message.
             </p>
             <p>
               ScamSpotter is an educational resource, not a government service, bank or law enforcement agency. We

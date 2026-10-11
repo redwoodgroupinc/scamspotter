@@ -21,7 +21,12 @@ export const metadata = pageMetadata({
   path: "/how-it-works",
 });
 
-const SEVERITY_TEXT: Record<Severity, string> = { critical: "Critical", strong: "Strong", moderate: "Moderate", weak: "Weak" };
+const SEVERITY_TEXT: Record<Severity, string> = {
+  critical: "Critical",
+  strong: "Strong",
+  moderate: "Moderate",
+  weak: "Weak",
+};
 const KIND_TEXT: Record<CheckerKind, string> = { message: "Message", email: "Email", job: "Job", phone: "Phone" };
 
 const URL_CHECKS: [string, string, string][] = [
@@ -69,8 +74,8 @@ export default function HowItWorksPage() {
             </h2>
             <ol className="mt-4 list-decimal space-y-3 pl-6">
               <li>
-                <strong>Validation.</strong> Empty text is rejected, and messages are limited to 10,000 characters
-                (web addresses to 2,048) to keep checks fast.
+                <strong>Validation.</strong> Empty text is rejected, and messages are limited to 10,000 characters (web
+                addresses to 2,048) to keep checks fast.
               </li>
               <li>
                 <strong>Clean-up.</strong> We remove invisible characters, convert stylised Unicode letters (such as
@@ -87,8 +92,7 @@ export default function HowItWorksPage() {
                 opened.
               </li>
               <li>
-                <strong>Scoring.</strong> Matching rules add their weight to a score, which sets the warning-sign
-                level.
+                <strong>Scoring.</strong> Matching rules add their weight to a score, which sets the warning-sign level.
               </li>
               <li>
                 <strong>Explanation.</strong> You see each warning sign, the text that triggered it, why it matters and
@@ -121,8 +125,8 @@ export default function HowItWorksPage() {
               </li>
             </ul>
             <p className="mt-4">
-              Rules that describe the same tactic share a group, and only the strongest match in each group counts.
-              The total score sets the level:
+              Rules that describe the same tactic share a group, and only the strongest match in each group counts. The
+              total score sets the level:
             </p>
             <ul className="mt-3 list-disc space-y-2 pl-6">
               <li>
@@ -168,14 +172,16 @@ export default function HowItWorksPage() {
               Every text rule
             </h2>
             <p className="mt-4">
-              The Job Scam Checker also flags pay that looks unrealistic when an advert stresses no experience, remote or
-              &ldquo;easy&rdquo; work: roughly {UNREALISTIC_PAY_THRESHOLDS.hour}+ per hour,{" "}
+              The Job Scam Checker also flags pay that looks unrealistic when an advert stresses no experience, remote
+              or &ldquo;easy&rdquo; work: roughly {UNREALISTIC_PAY_THRESHOLDS.hour}+ per hour,{" "}
               {UNREALISTIC_PAY_THRESHOLDS.day}+ per day, {UNREALISTIC_PAY_THRESHOLDS.week.toLocaleString("en-US")}+ per
               week or {UNREALISTIC_PAY_THRESHOLDS.month.toLocaleString("en-US")}+ per month (strong, +3).
             </p>
             <div className="mt-4 overflow-x-auto rounded-2xl border border-navy-100">
               <table className="w-full min-w-[40rem] text-left text-base">
-                <caption className="sr-only">All text rules with severity, weight and the checkers that use them</caption>
+                <caption className="sr-only">
+                  All text rules with severity, weight and the checkers that use them
+                </caption>
                 <thead className="bg-navy-50">
                   <tr>
                     <th scope="col" className="px-4 py-3 font-semibold">
@@ -212,9 +218,12 @@ export default function HowItWorksPage() {
               Web address checks
             </h2>
             <p className="mt-4">
-              The <Link href="/website-safety-guide" className="text-link">Website Safety Guide</Link> and the link
-              checks inside the other tools look only at how an address is written. We never request, open or follow
-              it. HTTPS is reported, but it never lowers the score, because scam sites use HTTPS too.
+              The{" "}
+              <Link href="/website-safety-guide" className="text-link">
+                Website Safety Guide
+              </Link>{" "}
+              and the link checks inside the other tools look only at how an address is written. We never request, open
+              or follow it. HTTPS is reported, but it never lowers the score, because scam sites use HTTPS too.
             </p>
             <div className="mt-4 overflow-x-auto rounded-2xl border border-navy-100">
               <table className="w-full min-w-[32rem] text-left text-base">
@@ -245,9 +254,10 @@ export default function HowItWorksPage() {
             </div>
             <p className="mt-4">
               Inside messages, links are summarised as a single &ldquo;links&rdquo; group: a deceptive link counts as
-              strong (+3), a shortened link as moderate (+2) and other link features as weak (+1). A link that downloads an app or program counts as a critical software warning (+4). Brand checks use a
-              short, hand-maintained list of banks, delivery companies, government services and technology brands, plus
-              a simplified list of domain endings, so they will miss many imitations.
+              strong (+3), a shortened link as moderate (+2) and other link features as weak (+1). A link that downloads
+              an app or program counts as a critical software warning (+4). Brand checks use a short, hand-maintained
+              list of banks, delivery companies, government services and technology brands, plus a simplified list of
+              domain endings, so they will miss many imitations.
             </p>
           </section>
 
@@ -257,8 +267,8 @@ export default function HowItWorksPage() {
             </h2>
             <p className="mt-4">
               If you add a sender address in the Email Checker, we look for a domain that imitates a brand (critical,
-              +4), a display name that shows a different address, an organisation writing from a free personal
-              mailbox, or a brand or government name on an unrelated domain (each strong, +3). Unusual domain endings,
+              +4), a display name that shows a different address, an organisation writing from a free personal mailbox,
+              or a brand or government name on an unrelated domain (each strong, +3). Unusual domain endings,
               random-looking mailbox names and hyphen-heavy domains are weak signals (+1). We can&rsquo;t see email
               headers, so we can&rsquo;t detect forged or hacked senders.
             </p>
@@ -273,7 +283,10 @@ export default function HowItWorksPage() {
               <li>New or unusually worded scams may not match any rule.</li>
               <li>Genuine messages, especially real security alerts, can contain warning signs.</li>
               <li>We can&rsquo;t identify senders or callers, see where links lead, or check reputation databases.</li>
-              <li>A conversation&rsquo;s context, such as whether you were expecting a parcel, isn&rsquo;t available to the tool.</li>
+              <li>
+                A conversation&rsquo;s context, such as whether you were expecting a parcel, isn&rsquo;t available to
+                the tool.
+              </li>
             </ul>
           </section>
 

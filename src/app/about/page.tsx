@@ -16,18 +16,19 @@ export default function AboutPage() {
       title="About ScamSpotter"
       path="/about"
       updated={SITE.lastReviewed}
-      intro={<p>{SITE.tagline} ScamSpotter helps people slow down, spot the warning signs and check before they act.</p>}
+      intro={
+        <p>{SITE.tagline} ScamSpotter helps people slow down, spot the warning signs and check before they act.</p>
+      }
     >
       <h2>What ScamSpotter does</h2>
       <p>
         Scam messages are designed to make you act quickly: tap the link, pay the fee, read out the code. ScamSpotter
-        gives you a moment to pause. Our free checkers look at a suspicious text, email, job offer, phone message or
-        web address and point out the specific features that commonly appear in scams, with a plain-English explanation
-        of each one and practical next steps.
+        gives you a moment to pause. Our free checkers look at a suspicious text, email, job offer, phone message or web
+        address and point out the specific features that commonly appear in scams, with a plain-English explanation of
+        each one and practical next steps.
       </p>
       <p>
-        Alongside the tools, we publish{" "}
-        <Link href="/guides">scam prevention guides</Link> and{" "}
+        Alongside the tools, we publish <Link href="/guides">scam prevention guides</Link> and{" "}
         <Link href="/scam-prevention">country pages</Link> for the United States, United Kingdom, Canada and Australia,
         so you can find the official reporting services where you live.
       </p>
@@ -35,8 +36,8 @@ export default function AboutPage() {
       <h2>What ScamSpotter is not</h2>
       <ul>
         <li>
-          <strong>It isn&rsquo;t a verdict.</strong> Our checkers find warning signs; they can&rsquo;t prove a message is
-          genuine or fraudulent. A Low result never means something is safe.
+          <strong>It isn&rsquo;t a verdict.</strong> Our checkers find warning signs; they can&rsquo;t prove a message
+          is genuine or fraudulent. A Low result never means something is safe.
         </li>
         <li>
           <strong>It isn&rsquo;t AI or a scam database.</strong> We use transparent, published rules. You can read every

@@ -43,6 +43,9 @@ export default async function CountryPage({ params }: CountryPageProps) {
   if (!country) notFound();
 
   const sources = country.sources.map((id) => requireSource(id));
+  // US and Canadian English use -ize spellings; UK and Australian English use -ise.
+  const usesIze = country.code === "us" || country.code === "ca";
+  const organisations = usesIze ? "organizations" : "organisations";
   const guides = getAllGuides().slice(0, 4);
 
   return (
@@ -90,8 +93,12 @@ export default async function CountryPage({ params }: CountryPageProps) {
                   <h3 className="text-lg font-semibold text-navy-950">{channel.name}</h3>
                   <p className="mt-1 text-sm font-medium text-navy-700">For: {channel.useFor}</p>
                   <p className="mt-2 leading-relaxed text-navy-800">{channel.how}</p>
-                  <a href={source.url} rel="noopener noreferrer" className="text-link mt-3 inline-flex items-center gap-1 text-sm">
-                    {source.publisher}: {source.title}
+                  <a
+                    href={source.url}
+                    rel="noopener noreferrer"
+                    className="text-link mt-3 inline-flex items-center gap-1 text-sm"
+                  >
+                    {source.publisher === source.title ? source.title : `${source.publisher}: ${source.title}`}
                     <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
                   </a>
                 </li>
@@ -102,11 +109,11 @@ export default async function CountryPage({ params }: CountryPageProps) {
 
         <section aria-labelledby="never-heading" className="mt-12">
           <h2 id="never-heading" className="text-2xl font-bold text-navy-950">
-            What official organisations say
+            What official {organisations} say
           </h2>
           <p className="mt-2 text-navy-700">
-            Knowing how genuine organisations behave is one of the best defences. These statements summarise the
-            organisations&rsquo; own published guidance.
+            Knowing how genuine organisations behave is one of the best defences. These statements{" "}
+            {usesIze ? "summarize" : "summarise"} the {organisations}&rsquo; own published guidance.
           </p>
           <ul className="mt-6 space-y-4">
             {country.officialStatements.map((item) => {
@@ -115,7 +122,11 @@ export default async function CountryPage({ params }: CountryPageProps) {
                 <li key={item.statement} className="rounded-2xl border-l-4 border-brand-600 bg-navy-50 p-5">
                   <p className="font-semibold text-navy-950">{item.organisation}</p>
                   <p className="mt-1 leading-relaxed text-navy-800">{item.statement}</p>
-                  <a href={source.url} rel="noopener noreferrer" className="text-link mt-2 inline-flex items-center gap-1 text-sm">
+                  <a
+                    href={source.url}
+                    rel="noopener noreferrer"
+                    className="text-link mt-2 inline-flex items-center gap-1 text-sm"
+                  >
                     Source: {source.title}
                     <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
                   </a>

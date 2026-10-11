@@ -43,7 +43,10 @@ describe("input validation", () => {
 });
 
 describe("illustrative examples shown on the site", () => {
-  for (const [kind, examples] of Object.entries(TEXT_EXAMPLES) as [CheckerKind, (typeof TEXT_EXAMPLES)[CheckerKind]][]) {
+  for (const [kind, examples] of Object.entries(TEXT_EXAMPLES) as [
+    CheckerKind,
+    (typeof TEXT_EXAMPLES)[CheckerKind],
+  ][]) {
     for (const example of examples) {
       it(`${kind}/${example.id} is ${example.expected}`, () => {
         const result = ok(analyzeText(example.text, kind, { sender: example.sender }));
@@ -60,14 +63,29 @@ describe("ordinary legitimate messages (false-positive checks)", () => {
   const legitimate: [CheckerKind, string][] = [
     ["message", "Hey, are we still on for dinner at 7? I'll book the table."],
     ["message", "Your Google verification code is 552910. Don't share this code with anyone."],
-    ["message", "Chase Fraud Alert: Did you attempt a $45.00 purchase at TARGET on 10/10? Reply YES or NO. To opt out, reply STOP."],
-    ["message", "Royal Mail: Your parcel from ASOS will be delivered today between 10:00 and 13:00. Track at royalmail.com/track"],
+    [
+      "message",
+      "Chase Fraud Alert: Did you attempt a $45.00 purchase at TARGET on 10/10? Reply YES or NO. To opt out, reply STOP.",
+    ],
+    [
+      "message",
+      "Royal Mail: Your parcel from ASOS will be delivered today between 10:00 and 13:00. Track at royalmail.com/track",
+    ],
     ["message", "Our autumn sale ends tonight! Use code AUTUMN20 at checkout for 20% off."],
     ["message", "Hi Mum, I'll be home late tonight. Can you save me some dinner?"],
-    ["email", "Hi Alex,\n\nThanks for your order. Your receipt is below. Delivery fee: $4.99. We'll deliver your order on Tuesday.\n\nThe Shop Team"],
+    [
+      "email",
+      "Hi Alex,\n\nThanks for your order. Your receipt is below. Delivery fee: $4.99. We'll deliver your order on Tuesday.\n\nThe Shop Team",
+    ],
     ["email", "Reminder: the library will be closed on Monday for the public holiday. Normal hours resume on Tuesday."],
-    ["job", "Registered Nurse (Band 5), Brighton. Full-time, permanent. Salary £29,970 to £36,483 a year. Interviews held on site. Apply via the NHS Jobs website."],
-    ["job", "We cover the visa fee and relocation costs for successful candidates. Interviews are conducted by video call with the engineering team."],
+    [
+      "job",
+      "Registered Nurse (Band 5), Brighton. Full-time, permanent. Salary £29,970 to £36,483 a year. Interviews held on site. Apply via the NHS Jobs website.",
+    ],
+    [
+      "job",
+      "We cover the visa fee and relocation costs for successful candidates. Interviews are conducted by video call with the engineering team.",
+    ],
     ["phone", "Hi, it's the pharmacy. Your prescription is ready for collection. We're open until 6pm today."],
   ];
 
@@ -77,7 +95,9 @@ describe("ordinary legitimate messages (false-positive checks)", () => {
   });
 
   it("does not flag 'never share your code' style warnings as a code request", () => {
-    const result = ok(analyzeText("We will never ask you to send us your code. Never share your PIN with anyone.", "message"));
+    const result = ok(
+      analyzeText("We will never ask you to send us your code. Never share your PIN with anyone.", "message"),
+    );
     expect(ids(result)).not.toContain("code-request");
     expect(ids(result)).not.toContain("password-request");
   });
@@ -104,32 +124,48 @@ describe("obvious phishing and scam messages", () => {
       ),
     );
     expect(result.riskLevel).toBe("high");
-    expect(ids(result)).toEqual(expect.arrayContaining(["account-verify-request", "account-threat", "urgency", "link-deceptive"]));
+    expect(ids(result)).toEqual(
+      expect.arrayContaining(["account-verify-request", "account-threat", "urgency", "link-deceptive"]),
+    );
     const verify = result.findings.find((finding) => finding.id === "account-verify-request");
     expect(verify?.evidence[0]).toMatch(/Verify your identity/i);
     expect(result.links[0]?.registrableDomain).toBe("chase-secure-verify.top");
   });
 
   it("flags gift card payment demands", () => {
-    const result = ok(analyzeText("This is the IRS. You owe back taxes. Buy Google Play cards and send me photos of the back of the cards today.", "phone"));
+    const result = ok(
+      analyzeText(
+        "This is the IRS. You owe back taxes. Buy Google Play cards and send me photos of the back of the cards today.",
+        "phone",
+      ),
+    );
     expect(ids(result)).toContain("gift-card-payment");
     expect(ids(result)).toContain("combo-authority-payment");
     expect(result.riskLevel).toBe("high");
   });
 
   it("flags crypto ATM and safe-account requests as critical", () => {
-    const result = ok(analyzeText("Withdraw cash and deposit it at a Bitcoin ATM. It's the only way to move funds to the safe account.", "phone"));
+    const result = ok(
+      analyzeText(
+        "Withdraw cash and deposit it at a Bitcoin ATM. It's the only way to move funds to the safe account.",
+        "phone",
+      ),
+    );
     const critical = result.findings.filter((finding) => finding.severity === "critical").map((finding) => finding.id);
     expect(critical).toEqual(expect.arrayContaining(["crypto-atm", "safe-account"]));
   });
 
   it("flags remote-access tools", () => {
-    const result = ok(analyzeText("Your computer has a virus. Please install AnyDesk so our technician can fix it.", "phone"));
+    const result = ok(
+      analyzeText("Your computer has a virus. Please install AnyDesk so our technician can fix it.", "phone"),
+    );
     expect(ids(result)).toEqual(expect.arrayContaining(["remote-access", "tech-support-scare"]));
   });
 
   it("flags requests to install apps from outside the store", () => {
-    const result = ok(analyzeText("Download the attached security.apk and allow installs from unknown sources.", "message"));
+    const result = ok(
+      analyzeText("Download the attached security.apk and allow installs from unknown sources.", "message"),
+    );
     expect(ids(result)).toContain("sideload-app");
   });
 
@@ -148,7 +184,9 @@ describe("obvious phishing and scam messages", () => {
 
 describe("email checker", () => {
   it("checks the sender address when provided", () => {
-    const result = ok(analyzeText("Please review the attached invoice.", "email", { sender: "billing@micros0ft-billing.example" }));
+    const result = ok(
+      analyzeText("Please review the attached invoice.", "email", { sender: "billing@micros0ft-billing.example" }),
+    );
     expect(result.sender?.valid).toBe(true);
     expect(ids(result)).toContain("sender-lookalike");
   });
@@ -159,7 +197,11 @@ describe("email checker", () => {
   });
 
   it("flags organisations writing from personal mailboxes", () => {
-    const result = ok(analyzeText("Your Netflix membership is on hold. Update your payment details.", "email", { sender: "Netflix Billing <netflix.billing2026@gmail.com>" }));
+    const result = ok(
+      analyzeText("Your Netflix membership is on hold. Update your payment details.", "email", {
+        sender: "Netflix Billing <netflix.billing2026@gmail.com>",
+      }),
+    );
     expect(ids(result)).toContain("sender-free-provider-org");
   });
 
@@ -193,24 +235,41 @@ describe("job scam checker", () => {
   });
 
   it("flags money-mule recruitment", () => {
-    const result = ok(analyzeText("As a payment processing agent you will receive payments into your personal bank account and forward them, keeping 10% commission.", "job"));
+    const result = ok(
+      analyzeText(
+        "As a payment processing agent you will receive payments into your personal bank account and forward them, keeping 10% commission.",
+        "job",
+      ),
+    );
     expect(ids(result)).toContain("job-money-mule");
   });
 
   it("flags chat-only interviews and early requests for sensitive data", () => {
-    const result = ok(analyzeText("The interview will be conducted on Telegram. Please send your Social Security number and bank details so we can set up payroll.", "job"));
+    const result = ok(
+      analyzeText(
+        "The interview will be conducted on Telegram. Please send your Social Security number and bank details so we can set up payroll.",
+        "job",
+      ),
+    );
     expect(ids(result)).toEqual(expect.arrayContaining(["job-chat-interview", "job-sensitive-info"]));
   });
 
   it("only flags high pay when combined with low-effort cues", () => {
     const easy = ok(analyzeText("Work from home, no experience needed. Earn $350 per day.", "job"));
     expect(ids(easy)).toContain("job-unrealistic-pay");
-    const senior = ok(analyzeText("Senior surgeon, salary $350 per day plus benefits. Ten years' experience required.", "job"));
+    const senior = ok(
+      analyzeText("Senior surgeon, salary $350 per day plus benefits. Ten years' experience required.", "job"),
+    );
     expect(ids(senior)).not.toContain("job-unrealistic-pay");
   });
 
   it("flags reshipping and pressure to accept", () => {
-    const result = ok(analyzeText("Package inspector role: receive parcels at your home and reship them. Accept the offer within 2 hours or the position will be given to someone else.", "job"));
+    const result = ok(
+      analyzeText(
+        "Package inspector role: receive parcels at your home and reship them. Accept the offer within 2 hours or the position will be given to someone else.",
+        "job",
+      ),
+    );
     expect(ids(result)).toEqual(expect.arrayContaining(["job-reshipping", "job-pressure"]));
   });
 });
@@ -234,9 +293,16 @@ describe("unicode, non-English and hostile input", () => {
   });
 
   it("shows a notice for text that isn't English", () => {
-    const spanish = ok(analyzeText("Hola, su paquete está retenido en la aduana. Por favor pague la tarifa para liberar el envío lo antes posible gracias.", "message"));
+    const spanish = ok(
+      analyzeText(
+        "Hola, su paquete está retenido en la aduana. Por favor pague la tarifa para liberar el envío lo antes posible gracias.",
+        "message",
+      ),
+    );
     expect(spanish.notices.join(" ")).toMatch(/doesn't appear to be mainly in English/);
-    const chinese = ok(analyzeText("您好，您的包裹因地址不完整无法投递，请点击链接更新地址信息，否则包裹将被退回。", "message"));
+    const chinese = ok(
+      analyzeText("您好，您的包裹因地址不完整无法投递，请点击链接更新地址信息，否则包裹将被退回。", "message"),
+    );
     expect(chinese.notices.join(" ")).toMatch(/doesn't appear to be mainly in English/);
   });
 
@@ -255,11 +321,23 @@ describe("unicode, non-English and hostile input", () => {
     const html = '<img src=x onerror="alert(1)"> <script>alert("x")</script> Send me your password now';
     const result = ok(analyzeText(html, "message"));
     expect(ids(result)).toContain("password-request");
-    expect(result.findings.flatMap((finding) => finding.evidence).join(" ")).not.toMatch(/<script>alert\("x"\)<\/script> Send me your password/);
+    expect(result.findings.flatMap((finding) => finding.evidence).join(" ")).not.toMatch(
+      /<script>alert\("x"\)<\/script> Send me your password/,
+    );
   });
 
   it("analyses maximum-length adversarial input quickly", () => {
-    const chunks = ["send ", "the ", "code ", "verify ", "your ", "account ", "http://a.b.c.d.e.example/ ", "$1,000,000 per day ", "bit.ly/x "];
+    const chunks = [
+      "send ",
+      "the ",
+      "code ",
+      "verify ",
+      "your ",
+      "account ",
+      "http://a.b.c.d.e.example/ ",
+      "$1,000,000 per day ",
+      "bit.ly/x ",
+    ];
     let input = "";
     while (input.length < MAX_TEXT_LENGTH - 40) input += chunks[input.length % chunks.length];
     const kinds: CheckerKind[] = ["message", "email", "job", "phone"];

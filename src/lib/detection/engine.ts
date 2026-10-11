@@ -31,7 +31,8 @@ import type {
 } from "./types";
 import { analyzeUrl, extractUrls, maskUrls, parseUrlInput } from "./url-analysis";
 
-const NEGATION = /\b(?:never|not|don't|dont|do not|won't|will not|doesn't|does not|didn't|did not|cannot|can't|no one|nobody)\b/i;
+const NEGATION =
+  /\b(?:never|not|don't|dont|do not|won't|will not|doesn't|does not|didn't|did not|cannot|can't|no one|nobody)\b/i;
 
 /** True when the match is preceded, in the same clause, by a negation. */
 export function isNegated(text: string, index: number): boolean {
@@ -109,7 +110,13 @@ function detectUnrealisticPay(text: string): Finding | null {
   for (const match of text.matchAll(PAY_PATTERN)) {
     const amount = Math.max(toAmount(match[1], match[2]), toAmount(match[3], match[4]));
     const unit = (match[5] ?? "").toLowerCase();
-    const period = unit.startsWith("h") ? "hour" : unit.startsWith("d") ? "day" : unit.startsWith("w") ? "week" : "month";
+    const period = unit.startsWith("h")
+      ? "hour"
+      : unit.startsWith("d")
+        ? "day"
+        : unit.startsWith("w")
+          ? "week"
+          : "month";
     if (amount >= UNREALISTIC_PAY_THRESHOLDS[period]) {
       evidence.push(makeSnippet(text, match.index ?? 0, match[0].length));
       if (evidence.length >= MAX_EVIDENCE_PER_FINDING) break;
@@ -127,8 +134,26 @@ function detectUnrealisticPay(text: string): Finding | null {
   );
 }
 
-const DECEPTIVE_URL_CHECKS = new Set(["lookalike", "brand-mismatch", "gov-mismatch", "userinfo", "ip-address", "punycode", "path-brand"]);
-const WEAK_URL_CHECKS = new Set(["scheme", "tld", "subdomains", "free-hosting", "domain-pattern", "messaging-link", "redirect", "port", "path-keywords"]);
+const DECEPTIVE_URL_CHECKS = new Set([
+  "lookalike",
+  "brand-mismatch",
+  "gov-mismatch",
+  "userinfo",
+  "ip-address",
+  "punycode",
+  "path-brand",
+]);
+const WEAK_URL_CHECKS = new Set([
+  "scheme",
+  "tld",
+  "subdomains",
+  "free-hosting",
+  "domain-pattern",
+  "messaging-link",
+  "redirect",
+  "port",
+  "path-keywords",
+]);
 
 function linkFindings(links: UrlAnalysis[]): Finding[] {
   const deceptive: string[] = [];
@@ -140,7 +165,7 @@ function linkFindings(links: UrlAnalysis[]): Finding[] {
   for (const link of links) {
     for (const check of link.checks) {
       if (check.weight === 0) continue;
-      const line = `${link.input} (${check.label.toLowerCase()})`;
+      const line = `${link.input}: ${check.label}`;
       if (DECEPTIVE_URL_CHECKS.has(check.id) && check.status !== "pass") deceptive.push(line);
       else if (check.id === "shortener") shortened.push(link.input);
       else if (check.id === "download" && check.status === "fail") executables.push(link.input);
@@ -287,7 +312,10 @@ export const COMBINATION_RULES: readonly CombinationRule[] = [
     id: "combo-authority-payment",
     title: "Combination: an organisation asking for an unusual payment method",
     severity: "moderate",
-    requires: [["impersonation", "threat", "id-number"], ["payment-method", "safe-account"]],
+    requires: [
+      ["impersonation", "threat", "id-number"],
+      ["payment-method", "safe-account"],
+    ],
     explanation:
       "A bank, agency or company demanding gift cards, crypto or a transfer to a 'safe' account is one of the clearest scam patterns. Real organisations don't operate this way.",
   },
@@ -302,7 +330,10 @@ export const COMBINATION_RULES: readonly CombinationRule[] = [
     id: "combo-job-money",
     title: "Combination: job offer plus a request for your money",
     severity: "moderate",
-    requires: [["job-task", "job-pay", "job-process", "job-fee"], ["payment-method", "job-money"]],
+    requires: [
+      ["job-task", "job-pay", "job-process", "job-fee"],
+      ["payment-method", "job-money"],
+    ],
     explanation:
       "An easy, high-paying job that also requires you to pay, deposit or move money matches the pattern of task scams and money-mule recruitment.",
   },
@@ -452,23 +483,35 @@ export function analyzeUrlInput(input: unknown): UrlToolOutcome {
   }
   const trimmed = input.trim();
   if (EMAIL_ONLY.test(trimmed)) {
-    return error("invalid", "That looks like an email address rather than a web address. To check a sender address, use the Email Checker.");
+    return error(
+      "invalid",
+      "That looks like an email address rather than a web address. To check a sender address, use the Email Checker.",
+    );
   }
 
   const parsed = parseUrlInput(trimmed);
   if (!parsed.ok) {
     switch (parsed.reason) {
       case "spaces":
-        return error("invalid", "Web addresses can't contain spaces. Paste a single address, such as example.com/page.");
+        return error(
+          "invalid",
+          "Web addresses can't contain spaces. Paste a single address, such as example.com/page.",
+        );
       case "unsupported_scheme":
         return error(
           "invalid",
           `"${parsed.scheme}:" isn't a normal website address. Links starting with ${parsed.scheme}: can run code, open apps or download files, so don't open it. This tool checks http:// and https:// addresses only.`,
         );
       case "incomplete":
-        return error("invalid", "That address looks incomplete. Include the full domain, such as example.com or example.co.uk.");
+        return error(
+          "invalid",
+          "That address looks incomplete. Include the full domain, such as example.com or example.co.uk.",
+        );
       default:
-        return error("invalid", "That doesn't look like a valid web address. Check it and try again, for example: https://www.example.com/page");
+        return error(
+          "invalid",
+          "That doesn't look like a valid web address. Check it and try again, for example: https://www.example.com/page",
+        );
     }
   }
 
@@ -479,7 +522,9 @@ export function analyzeUrlInput(input: unknown): UrlToolOutcome {
 
   const notices: string[] = [];
   if (parsed.defanged) {
-    notices.push("This address was written in 'defanged' form (such as hxxp or [.]). We converted it back before checking.");
+    notices.push(
+      "This address was written in 'defanged' form (such as hxxp or [.]). We converted it back before checking.",
+    );
   }
 
   return {

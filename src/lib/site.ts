@@ -53,7 +53,8 @@ export const TOOLS: ToolInfo[] = [
     name: "Scam Message Checker",
     shortName: "Message Checker",
     href: "/message-checker",
-    description: "Check texts, WhatsApp and social media messages for pressure tactics, suspicious links and payment requests.",
+    description:
+      "Check texts, WhatsApp and social media messages for pressure tactics, suspicious links and payment requests.",
   },
   {
     id: "email",
@@ -74,7 +75,8 @@ export const TOOLS: ToolInfo[] = [
     name: "Website Safety Guide",
     shortName: "Website Safety Guide",
     href: "/website-safety-guide",
-    description: "Run preliminary checks on a web address, such as lookalike domains, raw IP addresses and shortened links.",
+    description:
+      "Run preliminary checks on a web address, such as lookalike domains, raw IP addresses and shortened links.",
   },
   {
     id: "phone",

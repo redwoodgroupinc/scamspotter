@@ -43,8 +43,8 @@ export function RuleList({ kind }: { kind: CheckerKind }) {
           </tbody>
         </table>
         <p className="mt-3 text-sm text-navy-700">
-          Links in the text are also checked for lookalike domains, brand names on unrelated domains, raw IP
-          addresses, shortened links and other structural warning signs.
+          Links in the text are also checked for lookalike domains, brand names on unrelated domains, raw IP addresses,
+          shortened links and other structural warning signs.
         </p>
       </div>
     </details>

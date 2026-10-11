@@ -22,10 +22,10 @@ export default function ContactPage() {
     >
       <div className="not-prose">
         <Callout tone="warning" title="Need help with a scam right now?">
-          ScamSpotter can&rsquo;t investigate scams, stop payments or recover money. If you&rsquo;ve lost money or shared
-          bank details, contact your bank immediately using the number on your card, then report it to the official
-          service in your country (listed below). In an emergency, call 911 in the US and Canada, 999 in the UK or 000 in
-          Australia.
+          ScamSpotter can&rsquo;t investigate scams, stop payments or recover money. If you&rsquo;ve lost money or
+          shared bank details, contact your bank immediately using the number on your card, then report it to the
+          official service in your country (listed below). In an emergency, call 911 in the US and Canada, 999 in the UK
+          or 000 in Australia.
         </Callout>
       </div>
 

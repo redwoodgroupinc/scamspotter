@@ -179,10 +179,34 @@ export interface UrlExample {
 }
 
 export const URL_EXAMPLES: UrlExample[] = [
-  { id: "typo", label: "Misspelled brand on an unencrypted page", url: "http://paypa1-login.top/verify", kind: "suspicious", expected: "high" },
-  { id: "subdomain", label: "Brand name used as a subdomain", url: "https://amazon.account-security-check.example/signin", kind: "suspicious", expected: "medium" },
+  {
+    id: "typo",
+    label: "Misspelled brand on an unencrypted page",
+    url: "http://paypa1-login.top/verify",
+    kind: "suspicious",
+    expected: "high",
+  },
+  {
+    id: "subdomain",
+    label: "Brand name used as a subdomain",
+    url: "https://amazon.account-security-check.example/signin",
+    kind: "suspicious",
+    expected: "medium",
+  },
   { id: "ip", label: "Raw IP address", url: "http://203.0.113.45/bank/login", kind: "suspicious", expected: "medium" },
-  { id: "punycode", label: "Look-alike international characters", url: "https://xn--pple-43d.com/", kind: "suspicious", expected: "medium" },
+  {
+    id: "punycode",
+    label: "Look-alike international characters",
+    url: "https://xn--pple-43d.com/",
+    kind: "suspicious",
+    expected: "medium",
+  },
   { id: "short", label: "Shortened link", url: "https://bit.ly/3Example", kind: "suspicious", expected: "medium" },
-  { id: "gov", label: "Official government address", url: "https://www.gov.uk/report-suspicious-emails-websites-phishing", kind: "legitimate", expected: "low" },
+  {
+    id: "gov",
+    label: "Official government address",
+    url: "https://www.gov.uk/report-suspicious-emails-websites-phishing",
+    kind: "legitimate",
+    expected: "low",
+  },
 ];

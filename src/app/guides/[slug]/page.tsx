@@ -12,7 +12,7 @@ import { Container } from "@/components/ui/Container";
 import { getAllGuides, getGuide } from "@/lib/content/guides";
 import { formatDate } from "@/lib/format";
 import { pageMetadata } from "@/lib/seo";
-import { absoluteUrl, SITE, TOOLS } from "@/lib/site";
+import { absoluteUrl, COUNTRY_NAV, SITE, TOOLS } from "@/lib/site";
 
 interface GuidePageProps {
   params: Promise<{ slug: string }>;
@@ -55,84 +55,121 @@ export default async function GuidePage({ params }: GuidePageProps) {
           { name: guide.title, href: `/guides/${guide.slug}` },
         ]}
       />
-      <article className="mx-auto max-w-3xl lg:mx-0">
-        <header className="mb-8">
-          <p className="eyebrow">{guide.category}</p>
-          <h1 className="mt-2 text-3xl font-bold tracking-tight text-navy-950 sm:text-4xl">{guide.title}</h1>
-          <p className="mt-4 text-xl leading-relaxed text-navy-700">{guide.summary}</p>
-          <p className="mt-4 text-sm text-navy-600">
-            Published by{" "}
-            <Link href="/editorial-policy" className="text-link">
-              ScamSpotter
-            </Link>{" "}
-            &middot; Published <time dateTime={guide.published}>{formatDate(guide.published)}</time>
-            {guide.updated !== guide.published && (
-              <>
-                {" "}
-                &middot; Updated <time dateTime={guide.updated}>{formatDate(guide.updated)}</time>
-              </>
-            )}{" "}
-            &middot; {guide.readingMinutes} min read
-          </p>
-        </header>
-
-        {guide.headings.length > 2 && (
-          <nav aria-labelledby="toc-heading" className="mb-10 rounded-2xl border border-navy-100 bg-navy-50 p-5">
-            <h2 id="toc-heading" className="text-base font-semibold text-navy-900">
-              On this page
-            </h2>
-            <ol className="mt-2 list-decimal space-y-1 pl-5 text-navy-800">
-              {guide.headings.map((heading) => (
-                <li key={heading.id}>
-                  <a href={`#${heading.id}`} className="hover:text-brand-700 hover:underline">
-                    {heading.text}
-                  </a>
-                </li>
-              ))}
-            </ol>
-          </nav>
-        )}
-
-        <Markdown>{guide.body}</Markdown>
-
-        {tools.length > 0 && (
-          <aside aria-labelledby="try-tool-heading" className="mt-12 rounded-2xl border border-brand-200 bg-brand-50 p-6">
-            <h2 id="try-tool-heading" className="text-xl font-bold text-navy-950">
-              Check a suspicious message
-            </h2>
-            <p className="mt-2 text-navy-800">
-              Paste it into one of our free checkers to see which warning signs it contains. The check runs in your
-              browser and nothing is stored.
+      <div className="grid gap-12 lg:grid-cols-[minmax(0,48rem)_16rem] lg:justify-between">
+        <article className="min-w-0">
+          <header className="mb-8">
+            <p className="eyebrow">{guide.category}</p>
+            <h1 className="mt-2 text-3xl font-bold tracking-tight text-navy-950 sm:text-4xl">{guide.title}</h1>
+            <p className="mt-4 text-xl leading-relaxed text-navy-700">{guide.summary}</p>
+            <p className="mt-4 text-sm text-navy-600">
+              Published by{" "}
+              <Link href="/editorial-policy" className="text-link">
+                ScamSpotter
+              </Link>{" "}
+              &middot; Published <time dateTime={guide.published}>{formatDate(guide.published)}</time>
+              {guide.updated !== guide.published && (
+                <>
+                  {" "}
+                  &middot; Updated <time dateTime={guide.updated}>{formatDate(guide.updated)}</time>
+                </>
+              )}{" "}
+              &middot; {guide.readingMinutes} min read
             </p>
-            <ul className="mt-4 flex flex-wrap gap-3">
-              {tools.map((tool) => (
-                <li key={tool.id}>
-                  <Link href={tool.href} className="btn-primary">
-                    {tool.name}
-                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </aside>
-        )}
+          </header>
 
-        <AdSlot placement="article" />
+          {guide.headings.length > 2 && (
+            <nav aria-labelledby="toc-heading" className="mb-10 rounded-2xl border border-navy-100 bg-navy-50 p-5">
+              <h2 id="toc-heading" className="text-base font-semibold text-navy-900">
+                On this page
+              </h2>
+              <ol className="mt-2 list-decimal space-y-1 pl-5 text-navy-800">
+                {guide.headings.map((heading) => (
+                  <li key={heading.id}>
+                    <a href={`#${heading.id}`} className="hover:text-brand-700 hover:underline">
+                      {heading.text}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          )}
 
-        <SourceList sources={guide.sources} />
-        <p className="mt-6 text-sm text-navy-600">
-          This guide is general information, not legal or financial advice. Read our{" "}
-          <Link href="/disclaimer" className="text-link">
-            disclaimer
-          </Link>{" "}
-          and{" "}
-          <Link href="/editorial-policy" className="text-link">
-            editorial policy
-          </Link>
-          .
-        </p>
-        <RelatedGuides guides={related} />
-      </article>
+          <Markdown>{guide.body}</Markdown>
+
+          {tools.length > 0 && (
+            <aside
+              aria-labelledby="try-tool-heading"
+              className="mt-12 rounded-2xl border border-brand-200 bg-brand-50 p-6"
+            >
+              <h2 id="try-tool-heading" className="text-xl font-bold text-navy-950">
+                Check a suspicious message
+              </h2>
+              <p className="mt-2 text-navy-800">
+                Paste it into one of our free checkers to see which warning signs it contains. The check runs in your
+                browser and nothing is stored.
+              </p>
+              <ul className="mt-4 flex flex-wrap gap-3">
+                {tools.map((tool) => (
+                  <li key={tool.id}>
+                    <Link href={tool.href} className="btn-primary">
+                      {tool.name}
+                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </aside>
+          )}
+
+          <AdSlot placement="article" />
+
+          <SourceList sources={guide.sources} />
+          <p className="mt-6 text-sm text-navy-600">
+            This guide is general information, not legal or financial advice. Read our{" "}
+            <Link href="/disclaimer" className="text-link">
+              disclaimer
+            </Link>{" "}
+            and{" "}
+            <Link href="/editorial-policy" className="text-link">
+              editorial policy
+            </Link>
+            .
+          </p>
+          <RelatedGuides guides={related} />
+        </article>
+        <aside aria-label="Tools and reporting" className="hidden lg:block">
+          <div className="sticky top-6 space-y-8">
+            <nav aria-labelledby="sidebar-tools-heading">
+              <h2 id="sidebar-tools-heading" className="text-sm font-semibold tracking-wide text-navy-900 uppercase">
+                Free checkers
+              </h2>
+              <ul className="mt-3 space-y-2 text-sm">
+                {TOOLS.map((tool) => (
+                  <li key={tool.id}>
+                    <Link href={tool.href} className="text-navy-700 hover:text-brand-700 hover:underline">
+                      {tool.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+            <nav aria-labelledby="sidebar-report-heading">
+              <h2 id="sidebar-report-heading" className="text-sm font-semibold tracking-wide text-navy-900 uppercase">
+                Report a scam
+              </h2>
+              <ul className="mt-3 space-y-2 text-sm">
+                {COUNTRY_NAV.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href} className="text-navy-700 hover:text-brand-700 hover:underline">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+        </aside>
+      </div>
       <JsonLd
         data={{
           "@context": "https://schema.org",

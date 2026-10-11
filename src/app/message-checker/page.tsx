@@ -35,15 +35,14 @@ export default function MessageCheckerPage() {
       howItWorks={
         <>
           <p>
-            The checker compares your message with a documented set of rules describing tactics that scammers use
-            again and again: asking for one-time codes, demanding unusual payment methods, inventing deadlines,
-            impersonating banks, delivery companies and government agencies, and hiding links behind shorteners or
-            lookalike domains.
+            The checker compares your message with a documented set of rules describing tactics that scammers use again
+            and again: asking for one-time codes, demanding unusual payment methods, inventing deadlines, impersonating
+            banks, delivery companies and government agencies, and hiding links behind shorteners or lookalike domains.
           </p>
           <p>
-            Each rule has a fixed weight. Related rules only count once, and no single rule can produce a High
-            result on its own. The analysis runs entirely in your browser: ScamSpotter doesn&rsquo;t receive, store
-            or log your message, and it doesn&rsquo;t use an AI model or a scam database.
+            Each rule has a fixed weight. Related rules only count once, and no single rule can produce a High result on
+            its own. The analysis runs entirely in your browser: ScamSpotter doesn&rsquo;t receive, store or log your
+            message, and it doesn&rsquo;t use an AI model or a scam database.
           </p>
           <p>
             That also means it has limits. A new scam may not match any rule, and a genuine message can contain a
@@ -63,8 +62,8 @@ export default function MessageCheckerPage() {
             <strong>It&rsquo;s unexpected.</strong> You weren&rsquo;t waiting for a parcel, refund, prize or job offer.
           </li>
           <li>
-            <strong>It wants something now.</strong> A deadline of hours, a threat to close your account, or a fine
-            that grows if you wait.
+            <strong>It wants something now.</strong> A deadline of hours, a threat to close your account, or a fine that
+            grows if you wait.
           </li>
           <li>
             <strong>It asks for a code, a password or personal details.</strong> One-time codes are for you alone.
@@ -91,8 +90,8 @@ export default function MessageCheckerPage() {
           <li>Don&rsquo;t tap links or call numbers in the message. Find the organisation&rsquo;s details yourself.</li>
           <li>Don&rsquo;t reply, even with STOP. Replying confirms that your number is active.</li>
           <li>
-            Forward scam texts to 7726 in the US, UK and Canada, or report them to Scamwatch in Australia. Then
-            block the sender and delete the message.
+            Forward scam texts to 7726 in the US, UK and Canada, or report them to Scamwatch in Australia. Then block
+            the sender and delete the message.
           </li>
           <li>
             If you&rsquo;ve already replied, paid or shared details, follow our{" "}

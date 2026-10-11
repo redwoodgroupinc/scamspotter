@@ -13,9 +13,9 @@ export function SiteFooter() {
             </Link>
             <p className="mt-3 font-semibold text-navy-800">{SITE.tagline}</p>
             <p className="mt-3 max-w-md text-sm leading-relaxed text-navy-700">
-              ScamSpotter is a free educational resource. Our checkers look for common warning signs using
-              transparent, local rules. They can&rsquo;t prove that anything is safe or a scam. If you&rsquo;ve lost
-              money or shared personal details, contact your bank and the official reporting service in your country.
+              ScamSpotter is a free educational resource. Our checkers look for common warning signs using transparent,
+              local rules. They can&rsquo;t prove that anything is safe or a scam. If you&rsquo;ve lost money or shared
+              personal details, contact your bank and the official reporting service in your country.
             </p>
           </div>
           <nav aria-label="Tools">

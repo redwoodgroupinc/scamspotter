@@ -35,7 +35,13 @@ interface RiskSummaryProps {
   extraBadge?: string;
 }
 
-export function RiskSummary({ level, score, findingCount, label = "Warning-sign level", extraBadge }: RiskSummaryProps) {
+export function RiskSummary({
+  level,
+  score,
+  findingCount,
+  label = "Warning-sign level",
+  extraBadge,
+}: RiskSummaryProps) {
   const styles = LEVEL_STYLES[level];
   const Icon = level === "high" ? AlertOctagon : level === "medium" ? AlertTriangle : Info;
   return (
@@ -47,7 +53,9 @@ export function RiskSummary({ level, score, findingCount, label = "Warning-sign 
           <p className="mt-1 text-2xl font-bold text-navy-950">{levelHeadline(level, findingCount)}</p>
           <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
             <span className={`rounded-full px-3 py-1 font-semibold ${styles.badge}`}>Score {score}</span>
-            {extraBadge && <span className="rounded-full bg-navy-800 px-3 py-1 font-semibold text-white">{extraBadge}</span>}
+            {extraBadge && (
+              <span className="rounded-full bg-navy-800 px-3 py-1 font-semibold text-white">{extraBadge}</span>
+            )}
             <span className="text-navy-700">
               Medium starts at {RISK_THRESHOLDS.medium}, High at {RISK_THRESHOLDS.high}.{" "}
               <Link href="/how-it-works#scoring" className="text-link">
@@ -87,7 +95,9 @@ export function FindingList({ findings }: { findings: Finding[] }) {
             <li key={finding.id} className="card">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <h4 className="text-lg font-semibold text-navy-950">{finding.title}</h4>
-                <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap ${severity.className}`}>
+                <span
+                  className={`rounded-full px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap ${severity.className}`}
+                >
                   {severity.text} &middot; +{finding.weight}
                 </span>
               </div>
@@ -195,8 +205,8 @@ export function SenderPanel({ sender }: { sender: SenderAnalysis | null }) {
         Sender address
       </h3>
       <p className="mt-1 text-sm text-navy-700">
-        We only checked how the address is written. We can&rsquo;t see email headers, so we can&rsquo;t tell whether
-        it was forged or sent from a hacked account.
+        We only checked how the address is written. We can&rsquo;t see email headers, so we can&rsquo;t tell whether it
+        was forged or sent from a hacked account.
       </p>
       <div className="card mt-4">
         <p className="font-mono text-sm break-all text-navy-950">{sender.input}</p>
@@ -226,7 +236,10 @@ export function Notices({ notices }: { notices: string[] }) {
   return (
     <ul className="mt-4 space-y-2">
       {notices.map((notice) => (
-        <li key={notice} className="flex gap-2 rounded-lg border border-brand-200 bg-brand-50 p-3 text-sm text-navy-900">
+        <li
+          key={notice}
+          className="flex gap-2 rounded-lg border border-brand-200 bg-brand-50 p-3 text-sm text-navy-900"
+        >
           <Info className="mt-0.5 h-4 w-4 shrink-0 text-brand-700" aria-hidden="true" />
           {notice}
         </li>

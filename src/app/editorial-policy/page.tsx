@@ -18,7 +18,11 @@ export default function EditorialPolicyPage() {
       title="Editorial Policy"
       path="/editorial-policy"
       updated={SITE.lastReviewed}
-      intro={<p>Scam advice is only useful if it&rsquo;s accurate. This page explains how we create and maintain our content.</p>}
+      intro={
+        <p>
+          Scam advice is only useful if it&rsquo;s accurate. This page explains how we create and maintain our content.
+        </p>
+      }
     >
       <h2>Sources we rely on</h2>
       <p>
@@ -39,8 +43,8 @@ export default function EditorialPolicyPage() {
         <li>We don&rsquo;t claim that our tools can confirm whether something is safe or a scam.</li>
         <li>We don&rsquo;t publish thin pages that simply swap one country name for another.</li>
         <li>
-          We don&rsquo;t let advertisers influence what we write. Advertising is provided automatically by Google AdSense,
-          and we don&rsquo;t accept paid placements or sponsored guides.
+          We don&rsquo;t let advertisers influence what we write. Advertising is provided automatically by Google
+          AdSense, and we don&rsquo;t accept paid placements or sponsored guides.
         </li>
       </ul>
 

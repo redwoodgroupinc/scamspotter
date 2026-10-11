@@ -51,7 +51,7 @@ export function UrlChecker({ examples }: UrlCheckerProps) {
       }. ${warnings} warning sign${warnings === 1 ? "" : "s"} found. Results follow the form.`,
     );
     requestAnimationFrame(() => {
-      resultsRef.current?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
+      resultsRef.current?.scrollIntoView?.({ behavior: prefersReducedMotion() ? "auto" : "smooth", block: "start" });
     });
   }
 
@@ -90,8 +90,8 @@ export function UrlChecker({ examples }: UrlCheckerProps) {
           Web address to check
         </label>
         <p id={hintId} className="mb-3 text-sm text-navy-700">
-          Paste a single address, such as https://www.example.com/page. Copy it carefully and don&rsquo;t open it
-          first. We never visit the address you enter.
+          Paste a single address, such as https://www.example.com/page. Copy it carefully and don&rsquo;t open it first.
+          We never visit the address you enter.
         </p>
         <input
           ref={inputRef}
@@ -115,7 +115,11 @@ export function UrlChecker({ examples }: UrlCheckerProps) {
           spellCheck={false}
         />
         {error && (
-          <p id={errorId} role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 font-medium text-red-800">
+          <p
+            id={errorId}
+            role="alert"
+            className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 font-medium text-red-800"
+          >
             {error}
           </p>
         )}

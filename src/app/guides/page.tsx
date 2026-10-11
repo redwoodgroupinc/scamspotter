@@ -22,9 +22,9 @@ export default function GuidesPage() {
       <div className="max-w-4xl">
         <PageHeader eyebrow="Learn" title="Scam Prevention Guides">
           <p>
-            Clear, practical guides to the scams people report most often, written in plain English and checked
-            against official advice from the US, UK, Canada and Australia. Each guide lists its sources so you can
-            read the original guidance.
+            Clear, practical guides to the scams people report most often, written in plain English and checked against
+            official advice from the US, UK, Canada and Australia. Each guide lists its sources so you can read the
+            original guidance.
           </p>
         </PageHeader>
         <RelatedGuides guides={guides} title={`All guides (${guides.length})`} />
@@ -38,7 +38,10 @@ export default function GuidesPage() {
           <ul className="mt-4 grid gap-3 sm:grid-cols-2">
             {COUNTRIES.map((country) => (
               <li key={country.slug}>
-                <Link href={`/scam-prevention/${country.slug}`} className="card block font-semibold text-navy-900 hover:border-brand-200 hover:text-brand-700">
+                <Link
+                  href={`/scam-prevention/${country.slug}`}
+                  className="card block font-semibold text-navy-900 hover:border-brand-200 hover:text-brand-700"
+                >
                   {country.name} scam prevention
                 </Link>
               </li>

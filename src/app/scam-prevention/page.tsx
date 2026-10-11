@@ -28,7 +28,10 @@ export default function ScamPreventionIndexPage() {
         <ul className="grid gap-4 sm:grid-cols-2">
           {COUNTRIES.map((country) => (
             <li key={country.slug}>
-              <Link href={`/scam-prevention/${country.slug}`} className="card group block h-full hover:border-brand-200 hover:bg-brand-50/40">
+              <Link
+                href={`/scam-prevention/${country.slug}`}
+                className="card group block h-full hover:border-brand-200 hover:bg-brand-50/40"
+              >
                 <h2 className="text-xl font-semibold text-navy-950 group-hover:text-brand-700">{country.name}</h2>
                 <p className="mt-2 text-sm leading-relaxed text-navy-700">{country.metaDescription}</p>
                 <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-brand-700">

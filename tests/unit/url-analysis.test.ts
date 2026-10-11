@@ -44,7 +44,15 @@ describe("URL input validation and malformed URLs", () => {
   });
 
   it("never throws on random malformed input", () => {
-    const samples = ["%%%", "http://[::1", "https://\u0000", "http://-.-", "://", "https://a.b/%E0%A4%A", "http://1.2.3.4.5"];
+    const samples = [
+      "%%%",
+      "http://[::1",
+      "https://\u0000",
+      "http://-.-",
+      "://",
+      "https://a.b/%E0%A4%A",
+      "http://1.2.3.4.5",
+    ];
     for (const sample of samples) expect(() => analyzeUrlInput(sample)).not.toThrow();
   });
 });
@@ -193,7 +201,9 @@ describe("extracting links from text", () => {
   });
 
   it("ignores email addresses and abbreviations", () => {
-    expect(extractUrls("Email help@example.com, e.g. for refunds, or call 3.5 hours later. Mr.Smith said hi.")).toEqual([]);
+    expect(extractUrls("Email help@example.com, e.g. for refunds, or call 3.5 hours later. Mr.Smith said hi.")).toEqual(
+      [],
+    );
   });
 
   it("de-duplicates and caps the number of links", () => {
