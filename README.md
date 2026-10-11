@@ -221,7 +221,7 @@ Cloudflare then rebuilds and redeploys automatically on every push.
 3. Configure the project:
    - **Project/Worker name:** `scamspotter` (it must match `name` in `wrangler.jsonc`)
    - **Production branch:** the branch you want live (for example `main`, or the current development branch until `main` exists)
-   - **Build command:** `npm run build:cloudflare`
+   - **Build command:** `npm run build:cloudflare` (`npm run build` also works: inside Cloudflare's build environment it automatically produces the same static output)
    - **Deploy command:** `npx wrangler deploy` (the default)
    - **Root directory:** leave empty
    - **Build variables:** optional, for example `NEXT_PUBLIC_CONTACT_EMAIL`. Add the AdSense variables here after approval. These are build-time values, not runtime variables.

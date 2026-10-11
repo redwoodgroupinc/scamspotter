@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "tsx scripts/build-cloudflare.mts --postbuild",
     "start": "next start",
     "build:cloudflare": "tsx scripts/build-cloudflare.mts",
     "preview:cloudflare": "wrangler dev",

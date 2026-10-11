@@ -7,6 +7,12 @@
  * 2. Writes out/_headers with the site's security headers.
  * 3. Publishes /ads.txt only when a valid AdSense publisher ID is configured.
  * 4. Checks that the files Cloudflare needs are present.
+ *
+ * With --postbuild it only does steps 2-4. `npm run build` runs it that way
+ * automatically (the "postbuild" npm script), and it does nothing unless the
+ * build was a static export, which next.config.ts switches on automatically
+ * inside Cloudflare's build environments. So a Cloudflare project whose build
+ * command is `npm run build` still produces a complete ./out folder.
  */
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
@@ -23,15 +29,22 @@ function fail(message: string): never {
   process.exit(1);
 }
 
-fs.rmSync(outDir, { recursive: true, force: true });
+const postbuildOnly = process.argv.includes("--postbuild");
+const cloudflareBuildEnv = process.env.WORKERS_CI === "1" || process.env.CF_PAGES === "1";
 
-const nextBin = createRequire(import.meta.url).resolve("next/dist/bin/next");
-const build = spawnSync(process.execPath, [nextBin, "build"], {
-  cwd: root,
-  stdio: "inherit",
-  env: { ...process.env, STATIC_EXPORT: "1", NEXT_TELEMETRY_DISABLED: "1" },
-});
-if (build.status !== 0) fail(`next build failed with exit code ${build.status}`);
+if (postbuildOnly) {
+  // Plain `npm run build` outside Cloudflare: nothing to do.
+  if (process.env.STATIC_EXPORT !== "1" && !cloudflareBuildEnv) process.exit(0);
+} else {
+  fs.rmSync(outDir, { recursive: true, force: true });
+  const nextBin = createRequire(import.meta.url).resolve("next/dist/bin/next");
+  const build = spawnSync(process.execPath, [nextBin, "build"], {
+    cwd: root,
+    stdio: "inherit",
+    env: { ...process.env, STATIC_EXPORT: "1", NEXT_TELEMETRY_DISABLED: "1" },
+  });
+  if (build.status !== 0) fail(`next build failed with exit code ${build.status}`);
+}
 
 for (const file of ["index.html", "404.html", "robots.txt", "sitemap.xml", "manifest.webmanifest"]) {
   if (!fs.existsSync(path.join(outDir, file))) fail(`Expected out/${file} after the static export.`);
