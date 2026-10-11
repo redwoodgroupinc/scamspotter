@@ -4,9 +4,18 @@ const PORT = Number(process.env.E2E_PORT ?? 3100);
 const baseURL = `http://127.0.0.1:${PORT}`;
 
 /**
- * End-to-end tests run against a production build (`npm run build` first).
+ * End-to-end tests run against a production build.
+ *
+ * - Default: `npm run build`, then tests run against `next start`.
+ * - E2E_TARGET=cloudflare: `npm run build:cloudflare`, then tests run against
+ *   Wrangler's local server, which serves ./out in Cloudflare's workerd runtime.
+ *
  * Set PLAYWRIGHT_CHROMIUM_PATH to use a pre-installed Chromium binary.
  */
+const cloudflare = process.env.E2E_TARGET === "cloudflare";
+const serverCommand = cloudflare
+  ? `npx wrangler dev --port ${PORT} --ip 127.0.0.1`
+  : `npx next start --port ${PORT} --hostname 127.0.0.1`;
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,
@@ -38,7 +47,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `npx next start --port ${PORT} --hostname 127.0.0.1`,
+    command: serverCommand,
+    env: { WRANGLER_SEND_METRICS: "false" },
     url: baseURL,
     // Always start a fresh server so tests run against the current build.
     reuseExistingServer: false,

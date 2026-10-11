@@ -28,3 +28,9 @@ jobs:
       - run: npm run test:e2e
         env:
           CI: "true"
+      # Cloudflare target: static export served by Wrangler in the workerd runtime
+      - run: npm run build:cloudflare
+      - run: npm run test:e2e:cloudflare
+        env:
+          CI: "true"
+          WRANGLER_SEND_METRICS: "false"

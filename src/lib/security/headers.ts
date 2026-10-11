@@ -57,7 +57,9 @@ export function buildContentSecurityPolicy({
   };
 
   const policy = Object.entries(directives).map(([name, values]) => `${name} ${values.join(" ")}`);
-  if (!isDev) policy.push("upgrade-insecure-requests");
+  // No "upgrade-insecure-requests": every resource is same-origin or HTTPS-only,
+  // browsers already block or upgrade mixed content, and HSTS enforces HTTPS.
+  // The directive would also break plain-HTTP local testing of redirects.
   return policy.join("; ");
 }
 

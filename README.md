@@ -24,8 +24,8 @@ All analysis runs **in the visitor's browser** using a transparent, rule-based e
 6. [How the detection engine works](#how-the-detection-engine-works)
 7. [Publishing content](#publishing-content)
 8. [Testing](#testing)
-9. [Deploying to GitHub and Vercel](#deploying-to-github-and-vercel)
-10. [Connecting ScamSpotter.net](#connecting-scamspotternet)
+9. [Deploying to Cloudflare](#deploying-to-cloudflare) (recommended)
+10. [Alternative: deploying to Vercel](#alternative-deploying-to-vercel)
 11. [Google Search Console and the sitemap](#google-search-console-and-the-sitemap)
 12. [Google AdSense](#google-adsense)
 13. [Privacy and security](#privacy-and-security)
@@ -46,9 +46,9 @@ All analysis runs **in the visitor's browser** using a transparent, rule-based e
 | Font                     | Inter (self-hosted, SIL Open Font License; see `src/fonts`)                                  |
 | Unit and component tests | Vitest 5, Testing Library, jsdom                                                             |
 | End-to-end tests         | Playwright                                                                                   |
-| Hosting                  | Vercel (any Node host that runs `next start` also works)                                     |
+| Hosting                  | Cloudflare Workers static assets (static export); Vercel or any Node host also works         |
 
-Requires **Node.js 20.9 or later** (`.nvmrc` pins Node 22).
+Requires **Node.js 20.9 or later** to build; Wrangler (Cloudflare's CLI) needs **Node.js 22 or later** (`.nvmrc` pins Node 22).
 
 ## Getting started
 
@@ -78,12 +78,16 @@ npm start                    # http://localhost:3000
 | `npm run typecheck`               | `tsc --noEmit` across app and tests                      |
 | `npm test`                        | Unit and component tests (Vitest)                        |
 | `npm run test:e2e`                | End-to-end tests (Playwright; run `npm run build` first) |
+| `npm run build:cloudflare`        | Static export to `./out` plus Cloudflare `_headers`      |
+| `npm run preview:cloudflare`      | Serve `./out` locally in Cloudflare's runtime (Wrangler) |
+| `npm run deploy:cloudflare`       | Build and deploy to Cloudflare from your machine         |
+| `npm run test:e2e:cloudflare`     | End-to-end tests against the Cloudflare build            |
 | `npm run format` / `format:check` | Prettier                                                 |
 | `npm run check`                   | Lint, typecheck, unit tests and build in one go          |
 
 ## Environment variables
 
-All variables are **optional** and **public** (they are inlined into the client bundle, so never put secrets in them). Set them in `.env.local` for local development or in **Vercel → Project → Settings → Environment Variables**. Changes take effect on the next build.
+All variables are **optional** and **public** (they are inlined into the client bundle, so never put secrets in them). Set them in `.env.local` for local development, as **build variables** in Cloudflare (**Worker → Settings → Build → Variables and secrets**), or in **Vercel → Project → Settings → Environment Variables**. They are read at build time, so changes take effect on the next build.
 
 | Variable                               | Purpose                                                                      | Default                                          |
 | -------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------ |
@@ -109,7 +113,7 @@ src/
     guides/ guides/[slug]/ Guide index and article template
     scam-prevention/ scam-prevention/[country]/
     about/ contact/ privacy-policy/ terms/ disclaimer/ editorial-policy/ how-it-works/
-    sitemap.ts robots.ts manifest.ts ads.txt/ opengraph-image.tsx icon.svg
+    sitemap.ts robots.ts manifest.ts ads.txt/ opengraph-image.png icon.svg
   components/
     ads/                   AdSenseScript (loads once) and AdSlot (renders nothing unless configured)
     checker/               TextChecker, UrlChecker, result panels, rule table, tool page layout
@@ -185,6 +189,9 @@ Don't invent statistics, quotes, testimonials, ratings, credentials or "current"
 npm test                 # 190+ unit and component tests
 npm run build
 npm run test:e2e         # ~90 Playwright tests on desktop and mobile Chromium
+
+npm run build:cloudflare
+npm run test:e2e:cloudflare   # the same tests against Wrangler serving ./out
 ```
 
 Unit tests cover empty, oversized, Unicode, non-English and adversarial input; legitimate messages that must stay Low; phishing, job, phone and email scams; malformed and suspicious URLs; risk-score boundaries; safe rendering of HTML/script input; AdSense configuration; security headers; content integrity; and navigation coverage.
@@ -193,26 +200,60 @@ End-to-end tests start `next start` on port 3100, visit every page (status, sing
 
 If Playwright can't find a browser, run `npx playwright install chromium`, or point it at an existing Chromium with `PLAYWRIGHT_CHROMIUM_PATH=/path/to/chrome`.
 
-## Deploying to GitHub and Vercel
+## Deploying to Cloudflare
 
-1. **Push the repository to GitHub** (already done if you're reading this on GitHub).
-2. **Create a Vercel account** at vercel.com and choose **Add New → Project**.
-3. **Import the GitHub repository.** Vercel detects Next.js automatically. Keep the defaults:
-   - Build command: `npm run build`
-   - Output: Next.js default
-   - Install command: `npm install`
-   - Node.js version: 20.x or 22.x (Project Settings → General)
-4. **Environment variables:** none are required for the first deploy. Optionally add `NEXT_PUBLIC_CONTACT_EMAIL`. Until your domain is connected you can set `NEXT_PUBLIC_SITE_URL` to your `https://<project>.vercel.app` URL, then change it back to `https://scamspotter.net` once the domain is live.
-5. **Deploy.** Every push to the production branch redeploys; every pull request gets a preview deployment. Preview deployments automatically send `X-Robots-Tag: noindex` and a disallow-all robots.txt so they don't compete with the real site in search.
+Every page is prerendered, so ScamSpotter deploys to Cloudflare as a **static site on Workers static assets**. No Worker code runs. Cloudflare serves the files in `./out` directly, and static asset requests are free. `wrangler.jsonc` holds the configuration.
 
-## Connecting ScamSpotter.net
+`npm run build:cloudflare` (`scripts/build-cloudflare.mts`):
 
-1. In Vercel, open **Project → Settings → Domains** and add `scamspotter.net` and `www.scamspotter.net`.
-2. Choose which is primary. This project's canonical URL is **`https://scamspotter.net`**, so set `www` to redirect to the apex domain.
-3. At your domain registrar, create the DNS records Vercel shows you (typically an `A` record for the apex and a `CNAME` for `www`). Use the exact values Vercel displays, because they can change.
-4. Wait for DNS to propagate and Vercel to issue the TLS certificate.
-5. Set `NEXT_PUBLIC_SITE_URL=https://scamspotter.net` (or remove it to use the default) and redeploy.
-6. Check `https://scamspotter.net/robots.txt` and `https://scamspotter.net/sitemap.xml` load correctly.
+1. runs `next build` with `STATIC_EXPORT=1`, which switches Next.js to `output: "export"`;
+2. writes `out/_headers` with the same security headers the Node server sends, a one-year immutable cache for `/_next/static/*`, and `X-Robots-Tag: noindex` for every `*.workers.dev` address so only your custom domain is indexed;
+3. publishes `/ads.txt` only when a valid AdSense publisher ID is set.
+
+Unknown URLs get the custom 404 page with a real `404` status, and `/about.html` and `/about/` redirect to `/about`.
+
+### Option A: connect the GitHub repository (recommended)
+
+Cloudflare then rebuilds and redeploys automatically on every push.
+
+1. In the Cloudflare dashboard, go to **Workers & Pages → Create application → Import a repository** and authorise GitHub if asked.
+2. Select **`redwoodgroupinc/scamspotter`**.
+3. Configure the project:
+   - **Project/Worker name:** `scamspotter` (it must match `name` in `wrangler.jsonc`)
+   - **Production branch:** the branch you want live (for example `main`, or the current development branch until `main` exists)
+   - **Build command:** `npm run build:cloudflare`
+   - **Deploy command:** `npx wrangler deploy` (the default)
+   - **Root directory:** leave empty
+   - **Build variables:** optional, for example `NEXT_PUBLIC_CONTACT_EMAIL`. Add the AdSense variables here after approval. These are build-time values, not runtime variables.
+4. Select **Save and Deploy**. The site appears at `https://scamspotter.<your-subdomain>.workers.dev` (marked `noindex`).
+
+Workers Builds reads `.nvmrc`, so builds use Node.js 22.
+
+### Option B: deploy from your computer
+
+```bash
+npx wrangler login            # opens a browser to authorise Wrangler
+npm run deploy:cloudflare     # builds ./out and runs wrangler deploy
+```
+
+For CI without a browser login, set `CLOUDFLARE_API_TOKEN` (a token with the "Edit Cloudflare Workers" template) and `CLOUDFLARE_ACCOUNT_ID`.
+
+### Connect ScamSpotter.net
+
+1. **Add the domain to Cloudflare.** In the dashboard, select **Add a domain**, enter `scamspotter.net`, choose the Free plan, and change the nameservers at your registrar to the two Cloudflare shows you. (If you buy the domain through Cloudflare Registrar, this happens automatically.) Wait until the zone shows as **Active**.
+2. **Attach the domain to the Worker.** Go to **Workers & Pages → scamspotter → Settings → Domains & Routes → Add → Custom Domain** and enter `scamspotter.net`. Cloudflare creates the DNS record and TLS certificate. Custom domains can't be created on a hostname that already has a CNAME record, so delete any old record for the apex first.
+3. **Redirect www to the apex domain.** Add a proxied DNS `A` record for `www` pointing to `192.0.2.0` (a placeholder, because the request never reaches it), then create a redirect rule from `www.scamspotter.net` to `https://scamspotter.net` that preserves the path and query string (**Rules → Redirect Rules**, which includes a "Redirect from WWW to root" template).
+4. **Turn on Always Use HTTPS** under **SSL/TLS → Edge Certificates**.
+5. Keep `NEXT_PUBLIC_SITE_URL` unset (it defaults to `https://scamspotter.net`). If you want to test on `workers.dev` before the domain is live, the canonical tags still point to scamspotter.net, which is what you want for launch.
+6. Check that `https://scamspotter.net/robots.txt`, `https://scamspotter.net/sitemap.xml` and a missing page (which should return the 404 page) all behave correctly.
+
+## Alternative: deploying to Vercel
+
+The same code also runs on Vercel (or any Node host using `next start`), where `next.config.ts` sends the security headers directly.
+
+1. In Vercel, choose **Add New → Project** and import the repository. Keep the detected Next.js defaults (`npm run build`).
+2. Deploy. Preview deployments automatically send `X-Robots-Tag: noindex` and a disallow-all robots.txt.
+3. To use the domain, add `scamspotter.net` and `www.scamspotter.net` under **Project → Settings → Domains**, set `www` to redirect to the apex, and create the DNS records Vercel shows at your DNS provider.
 
 ## Google Search Console and the sitemap
 
@@ -262,14 +303,14 @@ AdSense is the only planned monetisation. The site ships **with ads switched off
 - User text is analysed in the browser and never sent to the server, stored or logged. The checker buttons stay disabled until the page is hydrated, so a click can't fall back to a form submission that would put text into a URL.
 - Pasted content is rendered only as React text. Markdown is rendered with raw HTML disabled. JSON-LD is built from constants only, with `<` escaped.
 - The URL checker never fetches, resolves or follows user-supplied URLs (no SSRF surface). `javascript:`, `data:` and other non-web schemes are rejected with an explanation.
-- Security headers on every route: strict Content-Security-Policy, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Permissions-Policy`, HSTS and `Cross-Origin-Opener-Policy`. See `src/lib/security/headers.ts`.
+- Security headers on every route: strict Content-Security-Policy, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Permissions-Policy`, HSTS and `Cross-Origin-Opener-Policy`. See `src/lib/security/headers.ts` (sent by `next.config.ts` on Node hosts, and written to `out/_headers` for Cloudflare).
 - No analytics, tracking scripts, cookies or local storage are used by the site itself. Fonts are self-hosted.
 - If you later add server-side processing, analytics or a contact form, update the Privacy Policy and review security first.
 
 ## Launch checklist
 
-- [ ] `npm run check` and `npm run test:e2e` pass
-- [ ] Deployed to Vercel and `scamspotter.net` connected with HTTPS; `www` redirects to the apex domain
+- [ ] `npm run check`, `npm run test:e2e` and (after `npm run build:cloudflare`) `npm run test:e2e:cloudflare` pass
+- [ ] Deployed to Cloudflare and `scamspotter.net` connected with HTTPS; `www` redirects to the apex domain; Always Use HTTPS on
 - [ ] `NEXT_PUBLIC_SITE_URL` is `https://scamspotter.net` (or unset)
 - [ ] `NEXT_PUBLIC_CONTACT_EMAIL` set to a monitored mailbox; Contact page shows it
 - [ ] Read every guide, country page and policy page; confirm you're comfortable publishing them under your name
@@ -289,6 +330,7 @@ AdSense is the only planned monetisation. The site ships **with ads switched off
 - The Email Checker can't read headers (SPF, DKIM, DMARC) or attachments; the Phone Checker can't identify callers or verify numbers.
 - The Content-Security-Policy allows inline scripts because Next.js uses them for hydration on statically generated pages; user content is never rendered as HTML.
 - When AdSense is enabled the CSP is intentionally broader (HTTPS scripts, frames and images) to accommodate Google's ad delivery.
+- On Cloudflare, Next.js prefetch requests for the dynamic guide and country pages request data files whose names contain `$`; Cloudflare answers with one redirect to the percent-encoded name before serving them. Pages load normally; this only adds a redirect to background prefetches.
 
 ## Licence
 

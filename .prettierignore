@@ -5,3 +5,5 @@ content
 coverage
 playwright-report
 test-results
+out
+.wrangler

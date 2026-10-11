@@ -33,3 +33,7 @@ npm-debug.log*
 
 # typescript
 *.tsbuildinfo
+
+# cloudflare
+.wrangler
+.dev.vars*

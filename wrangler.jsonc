@@ -1,0 +1,20 @@
+{
+  // Cloudflare Workers configuration for ScamSpotter.
+  // The site is fully static: Cloudflare serves the files in ./out directly,
+  // without running any Worker code (static asset requests are free).
+  // Build with `npm run build:cloudflare`, then deploy with `npx wrangler deploy`.
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "scamspotter",
+  "compatibility_date": "2026-10-11",
+  "assets": {
+    "directory": "./out",
+    // Serve out/404.html with a 404 status for unknown paths.
+    "not_found_handling": "404-page",
+    // /about is served from about.html without a trailing slash.
+    "html_handling": "auto-trailing-slash",
+  },
+  // Keep the free *.workers.dev address available for testing. Its pages are
+  // marked noindex by out/_headers, so only your custom domain gets indexed.
+  "workers_dev": true,
+  "preview_urls": true,
+}

@@ -11,11 +11,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "build:cloudflare": "tsx scripts/build-cloudflare.mts",
+    "preview:cloudflare": "wrangler dev",
+    "deploy:cloudflare": "npm run build:cloudflare && wrangler deploy",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "test:e2e:cloudflare": "E2E_TARGET=cloudflare playwright test",
     "check": "npm run lint && npm run typecheck && npm run test && npm run build",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
@@ -45,8 +49,10 @@
     "jsdom": "^27.4.0",
     "prettier": "^3.9.10",
     "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.15",
     "typescript": "5.9.3",
     "vite": "^8.3.4",
-    "vitest": "^5.0.3"
+    "vitest": "^5.0.3",
+    "wrangler": "^4.149.0"
   }
 }

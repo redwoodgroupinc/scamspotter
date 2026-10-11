@@ -3,6 +3,9 @@ import { COUNTRIES } from "@/data/countries";
 import { getAllGuides } from "@/lib/content/guides";
 import { absoluteUrl, SITE, TOOLS } from "@/lib/site";
 
+// Generated once at build time (also required for static export).
+export const dynamic = "force-static";
+
 const STATIC_PAGES = [
   "/",
   "/guides",

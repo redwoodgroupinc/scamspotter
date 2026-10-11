@@ -14,6 +14,7 @@ describe("security headers", () => {
     expect(csp).toContain("frame-src 'none'");
     expect(csp).not.toContain("unsafe-eval");
     expect(csp).not.toContain("https:");
+    expect(csp).not.toContain("upgrade-insecure-requests");
   });
 
   it("only allows eval and websockets in development", () => {

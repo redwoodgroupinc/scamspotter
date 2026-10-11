@@ -180,7 +180,7 @@ export default async function GuidePage({ params }: GuidePageProps) {
           dateModified: guide.updated,
           mainEntityOfPage: url,
           url,
-          image: absoluteUrl("/opengraph-image"),
+          image: absoluteUrl("/opengraph-image.png"),
           inLanguage: "en",
           author: { "@type": "Organization", name: SITE.name, url: SITE.url },
           publisher: {
