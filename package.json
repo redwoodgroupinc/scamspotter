@@ -10,9 +10,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "postbuild": "tsx scripts/build-cloudflare.mts --postbuild",
+    "postbuild": "tsx scripts/build-static.mts --postbuild",
     "start": "next start",
-    "build:cloudflare": "tsx scripts/build-cloudflare.mts",
+    "build:cloudflare": "tsx scripts/build-static.mts",
+    "build:netlify": "tsx scripts/build-static.mts --host=netlify",
     "preview:cloudflare": "wrangler dev",
     "deploy:cloudflare": "npm run build:cloudflare && wrangler deploy",
     "lint": "eslint .",

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ProsePage } from "@/components/ui/ProsePage";
 import { getAdsConfig } from "@/lib/ads/config";
+import { getHostingProvider } from "@/lib/hosting";
 import { pageMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
 
@@ -13,6 +14,9 @@ export const metadata = pageMetadata({
 
 export default function PrivacyPolicyPage() {
   const ads = getAdsConfig();
+  const host = getHostingProvider();
+  const hostName = host?.name ?? "our hosting provider";
+  const HostName = host?.name ?? "Our hosting provider";
   return (
     <ProsePage
       title="Privacy Policy"
@@ -63,14 +67,20 @@ export default function PrivacyPolicyPage() {
 
       <h2>Information processed by our hosting provider</h2>
       <p>
-        ScamSpotter is hosted on Vercel. When your browser requests a page, Vercel receives standard technical
-        information, including your IP address, the page requested, the date and time, and your browser&rsquo;s user
-        agent. Vercel uses this to deliver the site, keep it secure (for example, to prevent abuse and denial-of-service
-        attacks) and diagnose problems. Vercel describes its practices in its{" "}
-        <a href="https://vercel.com/legal/privacy-notice" rel="noopener noreferrer">
-          privacy notice
-        </a>
-        . The text you check is not part of these requests.
+        {host && <>ScamSpotter is hosted on {host.name}. </>}When your browser requests a page, {hostName} receives
+        standard technical information, including your IP address, the page requested, the date and time, and your
+        browser&rsquo;s user agent. {HostName} uses this to deliver the site, keep it secure (for example, to prevent
+        abuse and denial-of-service attacks) and diagnose problems.{" "}
+        {host && (
+          <>
+            {host.name} describes its practices in its{" "}
+            <a href={host.privacyUrl} rel="noopener noreferrer">
+              privacy policy
+            </a>
+            .{" "}
+          </>
+        )}
+        The text you check is not part of these requests.
       </p>
       <p>
         Our fonts and scripts are served from our own domain, so loading a page doesn&rsquo;t contact third-party font
@@ -143,8 +153,9 @@ export default function PrivacyPolicyPage() {
         Depending on where you live, privacy laws such as the UK GDPR, the Australian Privacy Act, Canada&rsquo;s PIPEDA
         or US state privacy laws may give you rights to access or delete personal information about you. Because we
         don&rsquo;t keep accounts or the text you check, we usually hold very little information. You can contact us
-        using the details on our <Link href="/contact">contact page</Link>. For information processed by Vercel or
-        Google, you can also use the options described in their privacy policies.
+        using the details on our <Link href="/contact">contact page</Link>. For information processed by {hostName}
+        {ads.enabled ? " or Google" : ""}, you can also use the options described in{" "}
+        {ads.enabled ? "their privacy policies" : "its privacy policy"}.
       </p>
 
       <h2>Changes to this policy</h2>

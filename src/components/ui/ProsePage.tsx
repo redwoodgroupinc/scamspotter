@@ -24,7 +24,7 @@ export function ProsePage({ title, path, intro, updated, children }: ProsePagePr
             Last updated <time dateTime={updated}>{formatDate(updated)}</time>
           </p>
         )}
-        <div className="prose prose-lg max-w-none prose-slate prose-headings:scroll-mt-24 prose-headings:text-navy-950 prose-a:text-brand-700 prose-a:decoration-brand-200 prose-a:underline-offset-4 prose-strong:text-navy-950">
+        <div className="prose prose-lg max-w-none prose-slate prose-headings:scroll-mt-24 prose-headings:text-navy-950 prose-a:text-brand-700 prose-a:decoration-brand-200 prose-a:underline-offset-4 prose-a:wrap-break-word prose-code:wrap-anywhere prose-strong:text-navy-950">
           {children}
         </div>
       </div>

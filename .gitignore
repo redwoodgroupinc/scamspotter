@@ -37,3 +37,6 @@ npm-debug.log*
 # cloudflare
 .wrangler
 .dev.vars*
+
+# netlify
+.netlify

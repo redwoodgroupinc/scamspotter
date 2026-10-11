@@ -49,7 +49,7 @@ const components: Components = {
  */
 export function Markdown({ children }: { children: string }) {
   return (
-    <div className="prose prose-lg max-w-none prose-slate prose-headings:scroll-mt-24 prose-headings:text-navy-950 prose-a:text-brand-700 prose-a:decoration-brand-200 prose-a:underline-offset-4 hover:prose-a:decoration-brand-700 prose-strong:text-navy-950 prose-li:marker:text-navy-500">
+    <div className="prose prose-lg max-w-none prose-slate prose-headings:scroll-mt-24 prose-headings:text-navy-950 prose-a:text-brand-700 prose-a:decoration-brand-200 prose-a:underline-offset-4 prose-a:wrap-break-word hover:prose-a:decoration-brand-700 prose-code:wrap-anywhere prose-strong:text-navy-950 prose-li:marker:text-navy-500">
       <ReactMarkdown remarkPlugins={[remarkGfm]} components={components} skipHtml>
         {children}
       </ReactMarkdown>

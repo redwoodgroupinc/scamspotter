@@ -24,13 +24,14 @@ All analysis runs **in the visitor's browser** using a transparent, rule-based e
 6. [How the detection engine works](#how-the-detection-engine-works)
 7. [Publishing content](#publishing-content)
 8. [Testing](#testing)
-9. [Deploying to Cloudflare](#deploying-to-cloudflare) (recommended)
-10. [Alternative: deploying to Vercel](#alternative-deploying-to-vercel)
-11. [Google Search Console and the sitemap](#google-search-console-and-the-sitemap)
-12. [Google AdSense](#google-adsense)
-13. [Privacy and security](#privacy-and-security)
-14. [Launch checklist](#launch-checklist)
-15. [Known limitations](#known-limitations)
+9. [Deploying to Netlify](#deploying-to-netlify)
+10. [Deploying to Cloudflare](#deploying-to-cloudflare)
+11. [Alternative: deploying to Vercel](#alternative-deploying-to-vercel)
+12. [Google Search Console and the sitemap](#google-search-console-and-the-sitemap)
+13. [Google AdSense](#google-adsense)
+14. [Privacy and security](#privacy-and-security)
+15. [Launch checklist](#launch-checklist)
+16. [Known limitations](#known-limitations)
 
 ---
 
@@ -46,7 +47,7 @@ All analysis runs **in the visitor's browser** using a transparent, rule-based e
 | Font                     | Inter (self-hosted, SIL Open Font License; see `src/fonts`)                                  |
 | Unit and component tests | Vitest 5, Testing Library, jsdom                                                             |
 | End-to-end tests         | Playwright                                                                                   |
-| Hosting                  | Cloudflare Workers static assets (static export); Vercel or any Node host also works         |
+| Hosting                  | Netlify or Cloudflare Workers static assets (static export); Vercel or any Node host works   |
 
 Requires **Node.js 20.9 or later** to build; Wrangler (Cloudflare's CLI) needs **Node.js 22 or later** (`.nvmrc` pins Node 22).
 
@@ -69,25 +70,26 @@ npm start                    # http://localhost:3000
 
 ## Scripts
 
-| Command                           | What it does                                             |
-| --------------------------------- | -------------------------------------------------------- |
-| `npm run dev`                     | Start the development server                             |
-| `npm run build`                   | Production build (also type-checks)                      |
-| `npm start`                       | Serve the production build                               |
-| `npm run lint`                    | ESLint (Next.js core-web-vitals + TypeScript rules)      |
-| `npm run typecheck`               | `tsc --noEmit` across app and tests                      |
-| `npm test`                        | Unit and component tests (Vitest)                        |
-| `npm run test:e2e`                | End-to-end tests (Playwright; run `npm run build` first) |
-| `npm run build:cloudflare`        | Static export to `./out` plus Cloudflare `_headers`      |
-| `npm run preview:cloudflare`      | Serve `./out` locally in Cloudflare's runtime (Wrangler) |
-| `npm run deploy:cloudflare`       | Build and deploy to Cloudflare from your machine         |
-| `npm run test:e2e:cloudflare`     | End-to-end tests against the Cloudflare build            |
-| `npm run format` / `format:check` | Prettier                                                 |
-| `npm run check`                   | Lint, typecheck, unit tests and build in one go          |
+| Command                           | What it does                                                  |
+| --------------------------------- | ------------------------------------------------------------- |
+| `npm run dev`                     | Start the development server                                  |
+| `npm run build`                   | Production build (also type-checks)                           |
+| `npm start`                       | Serve the production build                                    |
+| `npm run lint`                    | ESLint (Next.js core-web-vitals + TypeScript rules)           |
+| `npm run typecheck`               | `tsc --noEmit` across app and tests                           |
+| `npm test`                        | Unit and component tests (Vitest)                             |
+| `npm run test:e2e`                | End-to-end tests (Playwright; run `npm run build` first)      |
+| `npm run build:netlify`           | Static export to `./out` plus Netlify `_headers`/`_redirects` |
+| `npm run build:cloudflare`        | Static export to `./out` plus Cloudflare `_headers`           |
+| `npm run preview:cloudflare`      | Serve `./out` locally in Cloudflare's runtime (Wrangler)      |
+| `npm run deploy:cloudflare`       | Build and deploy to Cloudflare from your machine              |
+| `npm run test:e2e:cloudflare`     | End-to-end tests against the Cloudflare build                 |
+| `npm run format` / `format:check` | Prettier                                                      |
+| `npm run check`                   | Lint, typecheck, unit tests and build in one go               |
 
 ## Environment variables
 
-All variables are **optional** and **public** (they are inlined into the client bundle, so never put secrets in them). Set them in `.env.local` for local development, as **build variables** in Cloudflare (**Worker → Settings → Build → Variables and secrets**), or in **Vercel → Project → Settings → Environment Variables**. They are read at build time, so changes take effect on the next build.
+All variables are **optional** and **public** (they are inlined into the client bundle, so never put secrets in them). Set them in `.env.local` for local development, in **Netlify → Project configuration → Environment variables**, as **build variables** in Cloudflare (**Worker → Settings → Build → Variables and secrets**), or in **Vercel → Project → Settings → Environment Variables**. They are read at build time, so changes take effect on the next build.
 
 | Variable                               | Purpose                                                                      | Default                                          |
 | -------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------ |
@@ -200,11 +202,54 @@ End-to-end tests start `next start` on port 3100, visit every page (status, sing
 
 If Playwright can't find a browser, run `npx playwright install chromium`, or point it at an existing Chromium with `PLAYWRIGHT_CHROMIUM_PATH=/path/to/chrome`.
 
+## Deploying to Netlify
+
+Every page is prerendered, so ScamSpotter deploys to Netlify as a **static site**: no functions run. `netlify.toml` holds the configuration:
+
+- **Build command:** `npm run build`. Inside Netlify's build environment (`NETLIFY=true`), `next.config.ts` switches to static export and the postbuild step (`scripts/build-static.mts`) writes:
+  - `out/_headers`: the same security headers the Node server sends, plus a one-year immutable cache for `/_next/static/*`;
+  - `out/_redirects`: a `200` rewrite for each page (`/about` serves `/about.html`), so clean URLs work however the host resolves folders;
+  - `out/ads.txt`, only when a valid AdSense publisher ID is set.
+- **Publish directory:** `out`.
+- **Environment:** Node.js 22, and `NETLIFY_NEXT_PLUGIN_SKIP=true` so Netlify's Next.js runtime (needed only for server rendering) stays out of the way.
+
+Unknown URLs get the custom 404 page (`out/404.html`) with a real `404` status. Netlify marks Deploy Previews and branch deploys `noindex` automatically.
+
+### Option A: connect the GitHub repository (recommended)
+
+Netlify then rebuilds and redeploys on every push.
+
+1. In Netlify, open the project (a project named **`scamspotter-pdh3`** already exists in the `redwoodgroupinc` team), or create one with **Add new project → Import an existing project**.
+2. Link the repository: **Project configuration → Build & deploy → Continuous deployment → Link repository** (or, for a new project, the import flow) → **GitHub** → **`redwoodgroupinc/scamspotter`**. Authorise the Netlify GitHub app for the repository if asked.
+3. **Branch to deploy:** the branch you want live (for example `main`, or the current development branch until it is merged).
+4. Leave the build settings as Netlify reads them from `netlify.toml` (build command `npm run build`, publish directory `out`).
+5. Optional: add environment variables under **Project configuration → Environment variables** (for example `NEXT_PUBLIC_CONTACT_EMAIL`; the AdSense variables after approval). They are build-time values, so trigger a new deploy after changing them.
+6. Deploy. The site appears at `https://scamspotter-pdh3.netlify.app` (or your project's `*.netlify.app` address).
+
+### Option B: deploy from your computer
+
+```bash
+npx netlify-cli login                      # opens a browser to authorise the CLI
+npx netlify-cli link                       # choose the scamspotter-pdh3 project
+npm run build:netlify                      # builds ./out with Netlify's _headers and _redirects
+npx netlify-cli deploy --prod --dir out    # uploads ./out as the production deploy
+```
+
+If the project is also connected to GitHub, the next push to the production branch replaces a hand-deployed version. `netlify link` writes `.netlify/`, which is git-ignored.
+
+### Connect ScamSpotter.net on Netlify
+
+1. Go to **Domain management → Add a domain** and enter `scamspotter.net`. Netlify also adds `www.scamspotter.net` and redirects it to the primary domain.
+2. Point DNS at Netlify: either switch to **Netlify DNS** (change the nameservers at your registrar to the ones Netlify lists), or keep your DNS provider and create exactly the records Netlify shows for the apex and `www`.
+3. Once DNS resolves, Netlify provisions a free Let's Encrypt certificate. Check under **Domain management → HTTPS** that it is active.
+4. Keep `NEXT_PUBLIC_SITE_URL` unset (it defaults to `https://scamspotter.net`), so canonical tags point to the custom domain even on the `*.netlify.app` address.
+5. Check that `https://scamspotter.net/robots.txt`, `https://scamspotter.net/sitemap.xml` and a missing page (which should return the 404 page) all behave correctly.
+
 ## Deploying to Cloudflare
 
 Every page is prerendered, so ScamSpotter deploys to Cloudflare as a **static site on Workers static assets**. No Worker code runs. Cloudflare serves the files in `./out` directly, and static asset requests are free. `wrangler.jsonc` holds the configuration.
 
-`npm run build:cloudflare` (`scripts/build-cloudflare.mts`):
+`npm run build:cloudflare` (`scripts/build-static.mts`):
 
 1. runs `next build` with `STATIC_EXPORT=1`, which switches Next.js to `output: "export"`;
 2. writes `out/_headers` with the same security headers the Node server sends, a one-year immutable cache for `/_next/static/*`, and `X-Robots-Tag: noindex` for every `*.workers.dev` address so only your custom domain is indexed;
@@ -303,14 +348,14 @@ AdSense is the only planned monetisation. The site ships **with ads switched off
 - User text is analysed in the browser and never sent to the server, stored or logged. The checker buttons stay disabled until the page is hydrated, so a click can't fall back to a form submission that would put text into a URL.
 - Pasted content is rendered only as React text. Markdown is rendered with raw HTML disabled. JSON-LD is built from constants only, with `<` escaped.
 - The URL checker never fetches, resolves or follows user-supplied URLs (no SSRF surface). `javascript:`, `data:` and other non-web schemes are rejected with an explanation.
-- Security headers on every route: strict Content-Security-Policy, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Permissions-Policy`, HSTS and `Cross-Origin-Opener-Policy`. See `src/lib/security/headers.ts` (sent by `next.config.ts` on Node hosts, and written to `out/_headers` for Cloudflare).
+- Security headers on every route: strict Content-Security-Policy, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Permissions-Policy`, HSTS and `Cross-Origin-Opener-Policy`. See `src/lib/security/headers.ts` (sent by `next.config.ts` on Node hosts, and written to `out/_headers` for Netlify and Cloudflare).
 - No analytics, tracking scripts, cookies or local storage are used by the site itself. Fonts are self-hosted.
 - If you later add server-side processing, analytics or a contact form, update the Privacy Policy and review security first.
 
 ## Launch checklist
 
 - [ ] `npm run check`, `npm run test:e2e` and (after `npm run build:cloudflare`) `npm run test:e2e:cloudflare` pass
-- [ ] Deployed to Cloudflare and `scamspotter.net` connected with HTTPS; `www` redirects to the apex domain; Always Use HTTPS on
+- [ ] Deployed (Netlify or Cloudflare) and `scamspotter.net` connected with HTTPS; `www` redirects to the apex domain
 - [ ] `NEXT_PUBLIC_SITE_URL` is `https://scamspotter.net` (or unset)
 - [ ] `NEXT_PUBLIC_CONTACT_EMAIL` set to a monitored mailbox; Contact page shows it
 - [ ] Read every guide, country page and policy page; confirm you're comfortable publishing them under your name
