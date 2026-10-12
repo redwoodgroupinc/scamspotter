@@ -303,7 +303,9 @@ The same code also runs on Vercel (or any Node host using `next start`), where `
 ## Google Search Console and the sitemap
 
 1. Go to Google Search Console and add a **Domain property** for `scamspotter.net`.
-2. Verify ownership with the **DNS TXT record** Google provides (recommended). Alternatively use a URL-prefix property with the **HTML tag** method: copy only the `content` value into `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` and redeploy.
+2. Verify ownership with the **DNS TXT record** Google provides (recommended). Alternatively use a URL-prefix property with:
+   - the **HTML file** method: the site already serves `public/googlee6481c1a51e79b7a.html` at `/googlee6481c1a51e79b7a.html`. Keep that file (it is excluded from Prettier so it stays byte-for-byte), and add any other file Google gives you to `public/` the same way; or
+   - the **HTML tag** method: copy only the `content` value into `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` and redeploy.
 3. Open **Sitemaps** and submit `https://scamspotter.net/sitemap.xml`.
 4. Use **URL Inspection** on the homepage and a guide to request indexing.
 5. Over the following weeks, review **Pages** (indexing) and **Core Web Vitals** reports.

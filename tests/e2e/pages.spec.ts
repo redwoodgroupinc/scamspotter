@@ -71,6 +71,12 @@ test.describe("every page", () => {
     expect(response?.status()).toBe(404);
     await expect(page.getByRole("heading", { name: "Page not found" })).toBeVisible();
   });
+
+  test("serves the Search Console verification file unchanged", async ({ request }) => {
+    const response = await request.get("/googlee6481c1a51e79b7a.html");
+    expect(response.status()).toBe(200);
+    expect(await response.text()).toBe("google-site-verification: googlee6481c1a51e79b7a.html");
+  });
 });
 
 test.describe("navigation", () => {

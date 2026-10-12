@@ -72,13 +72,19 @@ if (adsTxt) {
 
 fs.writeFileSync(path.join(outDir, "_headers"), buildHeadersFile({ adsEnabled, host }));
 
-const htmlFiles = fs
-  .readdirSync(outDir, { recursive: true })
-  .map(String)
-  .filter((file) => file.endsWith(".html"));
+const listHtml = (dir: string) =>
+  fs.existsSync(dir)
+    ? fs
+        .readdirSync(dir, { recursive: true })
+        .map(String)
+        .filter((file) => file.endsWith(".html"))
+    : [];
+const htmlFiles = listHtml(outDir);
+// Files copied from public/ (such as the Search Console verification file) are served as-is.
+const publicFiles = new Set(listHtml(path.join(root, "public")));
 const redirectsPath = path.join(outDir, "_redirects");
 if (host === "netlify") {
-  fs.writeFileSync(redirectsPath, buildNetlifyRedirects(htmlFiles));
+  fs.writeFileSync(redirectsPath, buildNetlifyRedirects(htmlFiles.filter((file) => !publicFiles.has(file))));
 } else {
   fs.rmSync(redirectsPath, { force: true });
 }

@@ -7,3 +7,5 @@ playwright-report
 test-results
 out
 .wrangler
+# Search Console verification files must stay byte-for-byte as Google issued them
+public/google*.html
