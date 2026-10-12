@@ -30,7 +30,7 @@ export const SITE = {
   contactEmail: resolveEmail(process.env.NEXT_PUBLIC_CONTACT_EMAIL),
   googleSiteVerification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim() || null,
   /** Date the site's standing pages (policies, tools, country pages) were last reviewed. */
-  lastReviewed: "2026-10-11",
+  lastReviewed: "2026-10-12",
 } as const;
 
 export function absoluteUrl(path = "/"): string {

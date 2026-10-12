@@ -52,6 +52,8 @@ export const TEXT_RULES: readonly TextRule[] = [
       /\b(?:send|share|give|tell|forward|read(?: out| back)?|provide|reply with|text (?:me|us|back)|confirm|repeat)\b[^.!?\n]{0,40}\b(?:codes?|otp|passcodes?|one[- ]time (?:pass(?:code|word)|pin|code)|verification (?:number|digits)|security (?:number|digits)|pin)\b/gi,
       /\bwhat(?:'s| is| was) the (?:code|otp|pin|passcode)\b/gi,
       /\b(?:codes?|otp|passcode)\b[^.!?\n]{0,30}\b(?:we|i) (?:just )?(?:sent|texted)\b[^.!?\n]{0,30}\b(?:to (?:me|us)|back to|verify (?:you|your identity))\b/gi,
+      /\bi(?:'ve| have)? (?:accidentally |mistakenly )?(?:sent|forwarded|texted) (?:you |to you )?(?:my|a|the) (?:[\w-]{1,20} ){0,2}(?:codes?|otp|passcode)\b[^.!?\n]{0,30}\b(?:to you|to your (?:number|phone)|by mistake|by accident|accidentally)\b/gi,
+      /\b(?:codes?|otp|passcode)\b[^\n]{0,80}\b(?:send|forward|text|pass) (?:it|that|this|the code) (?:back|to me)\b/gi,
     ],
     explanation:
       "One-time codes prove that you are the person signing in or approving a payment. Banks, government agencies and tech companies don't ask you to read out or forward these codes. Anyone who gets your code can take over an account or approve a transaction.",
@@ -168,6 +170,7 @@ export const TEXT_RULES: readonly TextRule[] = [
     severity: "critical",
     group: "safe-account",
     appliesTo: ALL,
+    negatable: true,
     patterns: [
       /\bsafe (?:bank )?accounts?\b/gi,
       /\b(?:move|transfer|send|deposit)\b[^.!?\n]{0,30}\b(?:money|funds|savings|balance|cash)\b[^.!?\n]{0,40}\b(?:secure|protected|temporary|new|alternative|holding) (?:bank )?accounts?\b/gi,
@@ -199,7 +202,7 @@ export const TEXT_RULES: readonly TextRule[] = [
     negatable: true,
     patterns: [
       new RegExp(
-        String.raw`\b(?:can|could) you (?:please )?(?:send|lend|transfer|pay|loan|wire)\b[^.!?\n]{0,30}(?:\bmoney\b|\bme\b|\bcash\b|\bfunds\b|${MONEY}|\d)`,
+        String.raw`\b(?:can|could) you (?:please )?(?:send|lend|transfer|pay|loan|wire)\b[^.!?\n]{0,30}(?:\bmoney\b|\bcash\b|\bfunds\b|${MONEY}|\d)`,
         "gi",
       ),
       new RegExp(
@@ -281,10 +284,10 @@ export const TEXT_RULES: readonly TextRule[] = [
     group: "secrecy",
     appliesTo: ALL,
     patterns: [
-      /\b(?:don'?t|do not|never) (?:tell|inform|discuss (?:this )?with|mention (?:this|it) to|talk to|speak to|contact) (?:anyone|anybody|your (?:bank|family|husband|wife|partner|children|kids|son|daughter|friends|colleagues)|the bank|bank staff|the police|branch staff)\b/gi,
+      /\b(?:don'?t|do not|never) (?:tell|inform|discuss (?:this )?with|mention (?:this|it) to|talk to|speak to|contact) (?:anyone|anybody|your (?:bank|family|husband|wife|partner|children|kids|son|daughter|friends|colleagues)|the bank|bank staff|the police|branch staff)\b(?![^.!?\n]{0,30}\b(?:pin|pins|password|passwords|passcode|codes?|otp|one[- ]time|security (?:code|number|details)|card (?:number|details)|log-?in|account details)\b)/gi,
       /\bkeep (?:this|it|our conversation|the matter) (?:confidential|secret|private|between us|to yourself)\b/gi,
       /\b(?:if|when) (?:the )?(?:bank|teller|cashier|staff|anyone) asks?\b[^.!?\n]{0,40}\b(?:say|tell (?:them|her|him))\b/gi,
-      /\b(?:don'?t|do not) (?:hang up|end the call|disconnect)\b|\bstay on the (?:line|phone|call)\b/gi,
+      /\b(?:don'?t|do not) (?:hang up|end the call|disconnect)\b|\bstay on the (?:line|phone|call)\b(?! (?:and|while|until|for) (?:an?|the|our) (?:next )?(?:available )?(?:agent|advisor|adviser|representative|operator|team member|member of (?:our|the) team)\b)/gi,
     ],
     explanation:
       "Being told to keep a request secret, to give bank staff a cover story, or to stay on the line is a big red flag. Scammers isolate people so that friends, family or bank staff can't spot what's happening.",
@@ -334,6 +337,7 @@ export const TEXT_RULES: readonly TextRule[] = [
       /\bto (?:release|receive|claim|unlock|withdraw|collect|deliver|redeliver|process) (?:your|the) (?:funds|money|prize|parcel|package|item|winnings|inheritance|payment|loan|order|delivery|shipment)\b[^.!?\n]{0,40}\b(?:pay|fee|charge|deposit)\b/gi,
       /\b(?:unpaid|outstanding|pending|small|missing) (?:shipping|delivery|postage|customs|redelivery|re-delivery|handling|courier|import) (?:fees?|charges?|costs?|duty|duties|payments?)\b/gi,
       /\b(?:inheritance|next of kin|unclaimed (?:funds|estate)|consignment box|diplomatic (?:bag|courier))\b/gi,
+      /\b(?:won'?t|will not|wouldn'?t|refuse to) (?:let me|release me|allow me to)\b[^.!?\n]{0,40}\b(?:until|unless) (?:i|we) (?:pay|send|settle|clear)\b/gi,
     ],
     explanation:
       "Being asked to pay a small fee to receive a larger sum, a prize or a parcel is a classic advance-fee trick. Once you pay, there's always another fee, and the money or item never arrives.",
@@ -349,6 +353,7 @@ export const TEXT_RULES: readonly TextRule[] = [
     patterns: [
       /\b(?:guaranteed (?:returns?|profits?|income|earnings|payouts?)|risk[- ]free (?:investment|returns?|profits?|trading)|double your (?:money|investment|bitcoin|crypto)|passive income|trading (?:platform|signals|bot|account manager)|forex (?:trading|signals)|investment (?:opportunity|plan|package)|mining pool|liquidity mining)\b/gi,
       /\b\d{2,4} ?% (?:returns?|profit|roi|interest)\b/gi,
+      /\b\d{1,3}(?:\.\d+)? ?% (?:(?:daily|weekly|monthly|guaranteed|fixed) (?:returns?|profits?|roi|interest|gains?)|(?:daily|weekly|per day|per week|a day|a week|every day|every week)\b)/gi,
     ],
     explanation:
       "Promises of guaranteed, high or 'risk-free' returns are a hallmark of investment fraud. Real investments carry risk, and nobody legitimate can guarantee profits.",
@@ -497,7 +502,7 @@ export const TEXT_RULES: readonly TextRule[] = [
     group: "software",
     appliesTo: ALL,
     patterns: [
-      /\b(?:any ?desk|team ?viewer|ultra ?viewer|quick ?support|quick ?assist|logmein|rust ?desk|supremo|screen ?connect|connect ?wise|splashtop|ammyy|zoho assist|aeroadmin)\b/gi,
+      /\b(?:any ?desk|team ?viewer|ultra ?viewer|quicksupport|quick ?assist|logmein|rust ?desk|supremo|screen ?connect|connect ?wise|splashtop|ammyy|zoho assist|aeroadmin)\b/gi,
     ],
     explanation:
       "Remote-access apps let someone else see and control your device. Scammers posing as tech support, banks or refund teams use them to get into online banking or install malware. Only use remote access with an IT provider you contacted yourself.",
@@ -567,7 +572,7 @@ export const TEXT_RULES: readonly TextRule[] = [
     group: "attachment",
     appliesTo: WRITTEN,
     patterns: [
-      /\b[\w-]{1,60}\.(?:exe|scr|js|jse|vbs|vbe|bat|cmd|ps1|iso|img|vhd|html?|shtml|svg|zip|rar|7z|docm|xlsm|pptm|lnk|msi|jar|hta|one|apk|dmg)\b/gi,
+      /\b[\w-]{1,60}\.(?:exe|scr|jse|vbs|vbe|bat|cmd|ps1|iso|img|vhd|html?|shtml|svg|zip|rar|7z|docm|xlsm|pptm|lnk|msi|jar|hta|one|apk|dmg)\b/gi,
     ],
     explanation:
       "Program files, archives, web pages and macro-enabled documents sent by email are common ways to deliver malware or fake login pages. Don't open them unless you were expecting them and have confirmed with the sender.",
@@ -887,7 +892,7 @@ export const TEXT_RULES: readonly TextRule[] = [
     appliesTo: JOB,
     includeAddresses: true,
     patterns: [
-      /[\w.+-]+@(?:gmail|googlemail|yahoo|ymail|hotmail|outlook|live|aol|icloud|protonmail|proton|gmx|mail|yandex|zoho)\.[a-z.]{2,6}\b/gi,
+      /[\w.+-]{1,64}@(?:gmail|googlemail|yahoo|ymail|hotmail|outlook|live|aol|icloud|protonmail|proton|gmx|mail|yandex|zoho)\.[a-z.]{2,6}\b/gi,
     ],
     explanation:
       "Recruiters for real companies usually email from the company's own domain. A free webmail address isn't proof of a scam, but verify the person through the company's official website.",
@@ -896,7 +901,7 @@ export const TEXT_RULES: readonly TextRule[] = [
 
 /** Low-effort cues used by the unrealistic-pay detector. */
 export const LOW_EFFORT_CUES =
-  /\b(?:no experience|without experience|part[- ]time|from home|work from home|remote|flexible hours|easy|simple tasks?|just your (?:phone|smartphone)|few hours|students?|anyone can|no skills|beginner|stay[- ]at[- ]home)\b/i;
+  /\b(?:no experience|without experience|part[- ]time|from home|work from home|easy|simple tasks?|just your (?:phone|smartphone)|few hours|students?|anyone can|no skills|beginner|stay[- ]at[- ]home)\b/i;
 
 /**
  * Pay thresholds for the unrealistic-pay detector, applied only when the text

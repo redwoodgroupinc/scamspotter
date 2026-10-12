@@ -6,8 +6,12 @@
  * means the rules see the text the way a reader does.
  */
 
-// Zero-width characters, bidirectional controls and soft hyphens.
-const INVISIBLE_CHARS = /[­​-‏‪-‮⁠-⁤⁦-⁩﻿]/g;
+// Zero-width characters, bidirectional controls and soft hyphens. The
+// zero-width joiner and non-joiner (U+200C, U+200D) are handled separately:
+// emoji sequences and scripts such as Persian and Hindi rely on them.
+const INVISIBLE_CHARS = /[\u00AD\u200B\u200E\u200F\u202A-\u202E\u2060-\u2064\u2066-\u2069\uFEFF]/g;
+// A joiner between two Latin letters or digits has no purpose except to hide a word.
+const JOINER_IN_LATIN_WORD = /(?<=[A-Za-z0-9])[\u200C\u200D]+(?=[A-Za-z0-9])/g;
 const BIDI_OVERRIDES = /[‪-‮⁦-⁩]/;
 const SPACE_VARIANTS = /[   -   　\t]/g;
 const SINGLE_QUOTES = /[‘’‚‛′`´]/g;
@@ -86,9 +90,113 @@ const MIXED_SCRIPT_WORD = /[\p{L}\p{M}]+/gu;
 const LATIN = /\p{Script=Latin}/u;
 const LOOKALIKE_SCRIPTS = /[\p{Script=Cyrillic}\p{Script=Greek}]/u;
 
+/** Cyrillic and Greek letters that look like Latin ones, mapped to the Latin letter a reader sees. */
+const LOOKALIKE_TO_LATIN: Record<string, string> = {
+  // Cyrillic
+  а: "a",
+  в: "b",
+  е: "e",
+  ё: "e",
+  к: "k",
+  м: "m",
+  н: "h",
+  о: "o",
+  р: "p",
+  с: "c",
+  т: "t",
+  у: "y",
+  х: "x",
+  ѕ: "s",
+  і: "i",
+  ї: "i",
+  ј: "j",
+  ԁ: "d",
+  ԛ: "q",
+  ԝ: "w",
+  һ: "h",
+  ӏ: "l",
+  А: "A",
+  В: "B",
+  Е: "E",
+  Ё: "E",
+  К: "K",
+  М: "M",
+  Н: "H",
+  О: "O",
+  Р: "P",
+  С: "C",
+  Т: "T",
+  У: "Y",
+  Х: "X",
+  Ѕ: "S",
+  І: "I",
+  Ї: "I",
+  Ј: "J",
+  Ԛ: "Q",
+  Ԝ: "W",
+  Һ: "H",
+  Ӏ: "I",
+  // Greek
+  α: "a",
+  ε: "e",
+  ι: "i",
+  κ: "k",
+  ν: "v",
+  ο: "o",
+  ρ: "p",
+  τ: "t",
+  υ: "u",
+  χ: "x",
+  Α: "A",
+  Β: "B",
+  Ε: "E",
+  Ζ: "Z",
+  Η: "H",
+  Ι: "I",
+  Κ: "K",
+  Μ: "M",
+  Ν: "N",
+  Ο: "O",
+  Ρ: "P",
+  Τ: "T",
+  Υ: "Y",
+  Χ: "X",
+};
+
+/**
+ * Spell a word with plain Latin letters the way a reader would see it:
+ * Cyrillic and Greek look-alikes become Latin letters and accents are
+ * dropped ("аpple" -> "apple", "amazön" -> "amazon"). Used for domain names.
+ */
+export function foldToLatin(value: string): string {
+  return Array.from(value, (ch) => LOOKALIKE_TO_LATIN[ch] ?? ch)
+    .join("")
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "");
+}
+
+/**
+ * In words that mix Latin letters with Cyrillic or Greek look-alikes, replace
+ * the look-alikes with Latin letters so rules match what a reader sees.
+ * Words written entirely in Cyrillic or Greek are left alone. Every
+ * replacement is one UTF-16 unit for one, so text positions don't move.
+ */
+function foldLookalikes(text: string): string {
+  return text.replace(MIXED_SCRIPT_WORD, (word) => {
+    let hasLatin = false;
+    let hasLookalike = false;
+    for (const ch of word) {
+      if (LATIN.test(ch)) hasLatin = true;
+      else if (LOOKALIKE_SCRIPTS.test(ch)) hasLookalike = true;
+    }
+    if (!hasLatin || !hasLookalike) return word;
+    return Array.from(word, (ch) => LOOKALIKE_TO_LATIN[ch] ?? ch).join("");
+  });
+}
+
 export function normalizeText(input: string): NormalizedText {
   const hadBidiControls = BIDI_OVERRIDES.test(input);
-  const withoutInvisible = input.replace(INVISIBLE_CHARS, "");
+  const withoutInvisible = input.replace(INVISIBLE_CHARS, "").replace(JOINER_IN_LATIN_WORD, "");
   const hadInvisibleCharacters = withoutInvisible.length !== input.length;
 
   // Detect mixed-script words before NFKC (NFKC does not fold Cyrillic to Latin).
@@ -113,8 +221,7 @@ export function normalizeText(input: string): NormalizedText {
     }
   }
 
-  const text = withoutInvisible
-    .normalize("NFKC")
+  const text = foldLookalikes(withoutInvisible.normalize("NFKC"))
     .replace(SPACE_VARIANTS, " ")
     .replace(SINGLE_QUOTES, "'")
     .replace(DOUBLE_QUOTES, '"')

@@ -4,7 +4,7 @@ description: Step-by-step actions for every situation, from a suspicious text yo
 summary: Clear next steps whether you've just received a suspicious message or already clicked, paid or shared your details, plus where to report it in your country.
 category: Recovery
 published: 2026-10-11
-updated: 2026-10-11
+updated: 2026-10-12
 relatedTools: [message, email, phone]
 relatedGuides:
   - how-to-recognize-a-scam-text
@@ -58,7 +58,7 @@ Close the page. Visiting a page doesn't usually cause harm on its own, but stay 
 
 **Call your bank or card provider now**, using the number on the back of your card or in its official app, not a number from the message. Tell them exactly what you shared. They can block cards, watch for suspicious payments and advise you.
 
-In the UK, you can dial **159** to be connected to most banks' fraud teams ([Stop Scams UK](https://stopscamsuk.org.uk/campaign/get-help-now/)). The Canadian Anti-Fraud Centre suggests calling from a different phone, or waiting a few minutes, in case a scammer has kept the line open ([CAFC](https://antifraudcentre-centreantifraude.ca/scams-fraudes/b-investigator-enqueteur-eng.htm)).
+In the UK, you can dial **159** to be connected to most banks' fraud teams ([Stop Scams UK](https://stopscamsuk.org.uk/campaign/get-help-now/)). The Canadian Anti-Fraud Centre suggests calling from a different phone, or waiting 10 minutes, in case a scammer has kept the line open ([CAFC](https://antifraudcentre-centreantifraude.ca/scams-fraudes/b-investigator-enqueteur-eng.htm)).
 
 ## You sent money
 

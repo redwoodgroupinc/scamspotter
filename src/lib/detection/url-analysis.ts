@@ -21,6 +21,8 @@ import {
   type BrandProfile,
 } from "./domains";
 import { MAX_LINKS_PER_TEXT, MAX_URL_LENGTH } from "./limits";
+import { foldToLatin } from "./normalize";
+import { hostnameToUnicode, labelToUnicode } from "./punycode";
 import { riskLevelForScore } from "./scoring";
 import type { UrlAnalysis, UrlCheck } from "./types";
 
@@ -52,13 +54,27 @@ function refang(value: string): { value: string; changed: boolean } {
   return { value: refanged, changed: refanged !== value };
 }
 
+/** Remove trailing punctuation, keeping a ")" or "]" that closes one opened inside the address. */
+function trimTrailingPunctuation(value: string): string {
+  let result = value;
+  for (;;) {
+    const last = result.at(-1);
+    if (last === undefined || !/[>)"'\].,;:!?]/.test(last)) return result;
+    if (last === ")" || last === "]") {
+      const open = last === ")" ? "(" : "[";
+      if (result.split(open).length >= result.split(last).length) return result;
+    }
+    result = result.slice(0, -1);
+  }
+}
+
 export function cleanUrlInput(raw: string): string {
-  return raw
-    .replace(INVISIBLE, "")
-    .trim()
-    .replace(/^[<("'\[]+/, "")
-    .replace(/[>)"'\].,;:!?]+$/, "")
-    .slice(0, MAX_URL_LENGTH);
+  return trimTrailingPunctuation(
+    raw
+      .replace(INVISIBLE, "")
+      .trim()
+      .replace(/^[<("'\[]+/, ""),
+  ).slice(0, MAX_URL_LENGTH);
 }
 
 export function parseUrlInput(raw: string): ParseResult {
@@ -127,6 +143,11 @@ export function isOfficialFor(brand: BrandProfile, hostname: string): boolean {
 
 export function isOfficialForAnyBrand(hostname: string): boolean {
   return BRANDS.some((brand) => isOfficialFor(brand, hostname));
+}
+
+/** True for hostnames under a government suffix in the supported countries. */
+export function isGovernmentHost(hostname: string): boolean {
+  return GOVERNMENT_SUFFIXES.some((suffix) => hostMatches(hostname.toLowerCase(), suffix));
 }
 
 /** Split text into lowercase letter-only tokens ("pay-pal1.com" -> ["pay", "pal", "com"]). */
@@ -220,6 +241,16 @@ export function findLookalike(hostname: string): LookalikeMatch | null {
   for (const brand of BRANDS) {
     if (!brand.typoLabels || isOfficialFor(brand, host)) continue;
     for (const label of labels) {
+      // International labels: compare what the reader sees ("аpple") with the brand.
+      if (label.startsWith("xn--")) {
+        const shown = labelToUnicode(label);
+        const folded = foldToLatin(shown).toLowerCase();
+        const target = brand.typoLabels.find(
+          (name) => folded !== shown && (folded === name || folded.split("-").includes(name)),
+        );
+        if (target) return { brand, label: shown, target, reason: "characters" };
+        continue;
+      }
       const parts = label.split("-").filter(Boolean);
       const candidates = new Set([label, ...parts]);
       for (const target of brand.typoLabels) {
@@ -325,7 +356,7 @@ export function analyzeUrl(raw: string): UrlAnalysis | null {
   }
 
   // 3. Userinfo trick (anything@realhost)
-  if (url.username || url.password || /^[^/]*@/.test(cleaned.replace(/^[a-z]+:\/\//i, ""))) {
+  if (url.username || url.password || /^[^/?#]*@/.test(cleaned.replace(/^[a-z]+:\/\//i, ""))) {
     pushCheck(checks, {
       id: "userinfo",
       label: "Contains an '@' before the real address",
@@ -363,11 +394,12 @@ export function analyzeUrl(raw: string): UrlAnalysis | null {
   // 6. Brand and government lookalikes
   const lookalike = isIp ? null : findLookalike(hostname);
   const references = isIp ? [] : findBrandReferences(hostname.replace(/\.[^.]+$/, ""));
-  const misused = references.filter((reference) => !isOfficialFor(reference.brand, hostname));
+  // A domain that belongs to a known organisation isn't imitating another one.
+  const misused = isOfficialForAnyBrand(hostname)
+    ? []
+    : references.filter((reference) => !isOfficialFor(reference.brand, hostname));
   const governmentToken =
-    !isIp &&
-    letterTokens(hostname.replace(/\.[^.]+$/, "")).includes("gov") &&
-    !GOVERNMENT_SUFFIXES.some((suffix) => hostMatches(hostname, suffix));
+    !isIp && letterTokens(hostname.replace(/\.[^.]+$/, "")).includes("gov") && !isGovernmentHost(hostname);
 
   if (lookalike) {
     const how =
@@ -431,13 +463,13 @@ export function analyzeUrl(raw: string): UrlAnalysis | null {
 
   // 7. Internationalised / punycode domains
   if (hostname.split(".").some((label) => label.startsWith("xn--"))) {
+    const shown = hostnameToUnicode(hostname);
     pushCheck(checks, {
       id: "punycode",
       label: "Uses international characters",
       status: "warn",
       weight: 2,
-      detail:
-        "This domain contains non-Latin characters (shown in its encoded 'xn--' form). These are legitimate for many languages, but they can also imitate familiar names with look-alike letters.",
+      detail: `This domain contains non-Latin or accented characters${shown !== hostname ? `: browsers may display it as "${shown}"` : ""}. These are legitimate for many languages, but they can also imitate familiar names with look-alike letters.`,
     });
   }
 
@@ -482,8 +514,9 @@ export function analyzeUrl(raw: string): UrlAnalysis | null {
 
     // 11. Unusual domain pattern
     const mainLabel = registrable.split(".")[0] ?? "";
-    const hyphens = (mainLabel.match(/-/g) ?? []).length;
-    const digits = (mainLabel.match(/\d/g) ?? []).length;
+    const encoded = mainLabel.startsWith("xn--");
+    const hyphens = encoded ? 0 : (mainLabel.match(/-/g) ?? []).length;
+    const digits = encoded ? 0 : (mainLabel.match(/\d/g) ?? []).length;
     if (hyphens >= 3 || digits >= 5) {
       pushCheck(checks, {
         id: "domain-pattern",
@@ -568,7 +601,8 @@ export function analyzeUrl(raw: string): UrlAnalysis | null {
       label: `Downloads a .${extension} file`,
       status: "warn",
       weight: 2,
-      detail: "Archive, web-page and macro-enabled files are frequently used to deliver malware or fake login pages.",
+      detail:
+        "Archives, scripts, SVG images and macro-enabled documents are frequently used to deliver malware or fake login pages.",
     });
   }
 
@@ -732,22 +766,36 @@ const COMMON_TLDS = [
 ];
 
 const URL_IN_TEXT = new RegExp(
-  String.raw`\b(?:(?:https?|hxxps?):\/\/|www\.)[^\s<>"'\x60]+|\b(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+(?:${COMMON_TLDS.join("|")})\b(?::\d{2,5})?(?:\/[^\s<>"'\x60]*)?`,
+  String.raw`\b(?:(?:https?|hxxps?):\/\/|www\.)[^\s<>"'\x60]+|\b(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.){1,10}(?:${COMMON_TLDS.join("|")})\b(?::\d{2,5})?(?:\/[^\s<>"'\x60]*)?`,
   "gi",
 );
-const EMAIL_IN_TEXT = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
+const SCHEME_URL_IN_TEXT = /\b(?:https?|hxxps?):\/\/[^\s<>"'\x60]+/gi;
+// Repeats are capped (64-character mailbox names, 10 domain levels) so long
+// runs of letters or dots can't make these patterns slow.
+const EMAIL_IN_TEXT = /[\w.+-]{1,64}@[\w-]{1,63}(?:\.[\w-]{1,63}){1,10}/g;
 
 /** Replace email addresses with spaces so their domains aren't mistaken for links. */
 export function maskEmailAddresses(text: string): string {
   return text.replace(EMAIL_IN_TEXT, (match) => " ".repeat(match.length));
 }
 
-/** Find web addresses in free text (up to MAX_LINKS_PER_TEXT, de-duplicated). */
-export function extractUrls(text: string): string[] {
-  const masked = maskEmailAddresses(text);
+const blank = (match: string) => " ".repeat(match.length);
+
+/**
+ * Find web addresses in free text (de-duplicated, in order of appearance).
+ * Addresses with a scheme are found first, so "https://bank.com@evil.com" is
+ * read as a link rather than an email address; email addresses are then
+ * masked so their domains aren't mistaken for bare links.
+ */
+export function extractUrls(text: string, limit = MAX_LINKS_PER_TEXT): string[] {
+  const matches = [...text.matchAll(SCHEME_URL_IN_TEXT)];
+  const rest = maskEmailAddresses(text.replace(SCHEME_URL_IN_TEXT, blank));
+  matches.push(...rest.matchAll(URL_IN_TEXT));
+  matches.sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
+
   const found: string[] = [];
   const seen = new Set<string>();
-  for (const match of masked.matchAll(URL_IN_TEXT)) {
+  for (const match of matches) {
     const value = cleanUrlInput(match[0]);
     const key = value.toLowerCase();
     if (!value || seen.has(key)) continue;
@@ -755,12 +803,12 @@ export function extractUrls(text: string): string[] {
     if (!/[a-z]/i.test(value) || value.length < 4) continue;
     seen.add(key);
     found.push(value);
-    if (found.length >= MAX_LINKS_PER_TEXT) break;
+    if (found.length >= limit) break;
   }
   return found;
 }
 
 /** Replace web addresses with spaces (used before checking for file names in text). */
 export function maskUrls(text: string): string {
-  return maskEmailAddresses(text).replace(URL_IN_TEXT, (match) => " ".repeat(match.length));
+  return maskEmailAddresses(text.replace(SCHEME_URL_IN_TEXT, blank)).replace(URL_IN_TEXT, blank);
 }

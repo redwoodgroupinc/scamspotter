@@ -133,9 +133,13 @@ export const COUNTRIES: CountryProfile[] = [
       },
       {
         organisation: "Federal Trade Commission",
-        statement:
-          "The FTC says anyone who demands payment by gift card is a scammer, and that only scammers demand payment in cryptocurrency.",
+        statement: "The FTC says anyone who demands payment by gift card is a scammer.",
         source: "ftc-gift-cards",
+      },
+      {
+        organisation: "Federal Trade Commission",
+        statement: "The FTC says only scammers demand payment in cryptocurrency.",
+        source: "ftc-crypto",
       },
       {
         organisation: "Federal Trade Commission",

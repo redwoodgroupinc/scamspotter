@@ -9,11 +9,18 @@
 import { FREE_EMAIL_DOMAINS, HIGH_ABUSE_TLDS } from "./domains";
 import { MAX_SENDER_LENGTH } from "./limits";
 import type { SenderAnalysis, SenderObservation } from "./types";
-import { findBrandReferences, findLookalike, getRegistrableDomain, isOfficialFor, letterTokens } from "./url-analysis";
+import {
+  findBrandReferences,
+  findLookalike,
+  getRegistrableDomain,
+  isGovernmentHost,
+  isOfficialFor,
+  isOfficialForAnyBrand,
+  letterTokens,
+} from "./url-analysis";
 
 const ADDRESS_PATTERN = /^[^\s@<>()",;:]+@[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+$/i;
 const EMBEDDED_ADDRESS = /[^\s@<>()",;:]+@[a-z0-9-]+(?:\.[a-z0-9-]+)+/i;
-const GOVERNMENT_DOMAIN = /(?:^|\.)(?:gov|gov\.uk|gc\.ca|canada\.ca|gov\.au)$/i;
 
 export interface ParsedSender {
   displayName: string | null;
@@ -109,9 +116,11 @@ export function analyzeSender(raw: string, options: { bodyMentionsOrganisation?:
           },
     );
   } else if (!lookalike) {
-    const domainBrands = findBrandReferences(domain.replace(/\.[^.]+$/, "")).filter(
-      (reference) => !isOfficialFor(reference.brand, domain),
-    );
+    const domainBrands = isOfficialForAnyBrand(domain)
+      ? []
+      : findBrandReferences(domain.replace(/\.[^.]+$/, "")).filter(
+          (reference) => !isOfficialFor(reference.brand, domain),
+        );
     const mismatch = nameBrands[0] ?? domainBrands[0];
     if (mismatch) {
       const isGov = mismatch.brand.kind === "government";
@@ -125,7 +134,7 @@ export function analyzeSender(raw: string, options: { bodyMentionsOrganisation?:
           ? `The sender refers to ${mismatch.brand.name}, but ${domain} is not a government domain.`
           : `The sender mentions "${mismatch.keyword}", but the address belongs to ${registrable}, which isn't on our short list of ${mismatch.brand.name} domains. Check the company's real domain yourself.`,
       });
-    } else if (letterTokens(domain).includes("gov") && !GOVERNMENT_DOMAIN.test(domain)) {
+    } else if (letterTokens(domain).includes("gov") && !isGovernmentHost(domain)) {
       observations.push({
         id: "sender-brand-mismatch",
         label: "Government-sounding sender on a non-government domain",

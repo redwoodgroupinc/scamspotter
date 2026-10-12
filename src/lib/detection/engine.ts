@@ -34,9 +34,18 @@ import { analyzeUrl, extractUrls, maskUrls, parseUrlInput } from "./url-analysis
 const NEGATION =
   /\b(?:never|not|don't|dont|do not|won't|will not|doesn't|does not|didn't|did not|cannot|can't|no one|nobody)\b/i;
 
-/** True when the match is preceded, in the same clause, by a negation. */
+/** Words that start a new clause, so a negation before them doesn't carry over. */
+const CLAUSE_BREAK = /\b(?:but|so|if|unless|until|because|then|otherwise|instead|however)\b/gi;
+
+/**
+ * True when the match is preceded, in the same clause, by a negation.
+ * "We will never ask for your code" is negated; "We will never call you but
+ * please reply with the code" is not.
+ */
 export function isNegated(text: string, index: number): boolean {
   let before = text.slice(Math.max(0, index - 48), index);
+  const lastClauseWord = [...before.matchAll(CLAUSE_BREAK)].at(-1);
+  if (lastClauseWord) before = before.slice((lastClauseWord.index ?? 0) + lastClauseWord[0].length);
   const breakAt = Math.max(
     before.lastIndexOf(","),
     before.lastIndexOf(";"),
@@ -129,7 +138,7 @@ function detectUnrealisticPay(text: string): Finding | null {
     "employment",
     "strong",
     "job-pay",
-    `Pay far above normal rates for little effort or no experience is a classic lure for task scams, money-mule jobs and reshipping schemes. ScamSpotter flags pay of roughly ${UNREALISTIC_PAY_THRESHOLDS.hour}+ per hour, ${UNREALISTIC_PAY_THRESHOLDS.day}+ per day or ${UNREALISTIC_PAY_THRESHOLDS.week.toLocaleString("en-US")}+ per week when the ad also stresses no experience, part-time, remote or 'easy' work.`,
+    `Pay far above normal rates for little effort or no experience is a classic lure for task scams, money-mule jobs and reshipping schemes. ScamSpotter flags pay of roughly ${UNREALISTIC_PAY_THRESHOLDS.hour}+ per hour, ${UNREALISTIC_PAY_THRESHOLDS.day}+ per day or ${UNREALISTIC_PAY_THRESHOLDS.week.toLocaleString("en-US")}+ per week when the ad also stresses no experience, part-time, work-from-home or 'easy' work.`,
     evidence,
   );
 }
@@ -400,7 +409,9 @@ export function analyzeText(input: unknown, kind: CheckerKind, options: AnalyzeT
     if (pay) findings.push(pay);
   }
 
-  const urls = extractUrls(text);
+  // Look for one more link than we check, to know whether any were left out.
+  const foundUrls = extractUrls(text, MAX_LINKS_PER_TEXT + 1);
+  const urls = foundUrls.slice(0, MAX_LINKS_PER_TEXT);
   const links = urls.map((url) => analyzeUrl(url)).filter((link): link is UrlAnalysis => link !== null);
   findings.push(...linkFindings(links));
 
@@ -447,7 +458,7 @@ export function analyzeText(input: unknown, kind: CheckerKind, options: AnalyzeT
   if (normalized.hadInvisibleCharacters) {
     notices.push("Invisible characters were removed before checking. Evidence snippets show the cleaned-up text.");
   }
-  if (urls.length >= MAX_LINKS_PER_TEXT) {
+  if (foundUrls.length > MAX_LINKS_PER_TEXT) {
     notices.push(`Only the first ${MAX_LINKS_PER_TEXT} links were checked.`);
   }
   if (sender && !sender.valid) {

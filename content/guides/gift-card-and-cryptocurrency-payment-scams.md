@@ -4,7 +4,7 @@ description: Why scammers demand gift cards, crypto and crypto ATM payments, the
 summary: Requests to pay with gift cards or cryptocurrency are among the clearest scam signals there are. Here's why, the scripts scammers use, and how to act fast if you've paid.
 category: Payments
 published: 2026-10-11
-updated: 2026-10-11
+updated: 2026-10-12
 relatedTools: [message, phone, email]
 relatedGuides:
   - what-to-do-after-a-suspicious-message
@@ -83,4 +83,4 @@ Shop and bank staff are often trained to spot these situations. If a cashier ask
 
 ## Check a message
 
-If a message or call asks you to pay in an unusual way, paste it into our [Scam Message Checker](/message-checker) or [Phone Scam Message Checker](/phone-scam-checker). Gift card and crypto payment requests are flagged as critical warning signs.
+If a message or call asks you to pay in an unusual way, paste it into our [Scam Message Checker](/message-checker) or [Phone Scam Message Checker](/phone-scam-checker). Requests to pay with gift cards or through a crypto ATM are flagged as critical warning signs, and other requests to pay in cryptocurrency as strong ones.

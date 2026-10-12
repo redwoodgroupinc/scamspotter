@@ -35,7 +35,7 @@ export const BRANDS: BrandProfile[] = [
     kind: "company",
     keywords: ["paypal"],
     substringKeywords: ["paypal"],
-    officialDomains: ["paypal.com", "paypal.me", "paypalobjects.com"],
+    officialDomains: ["paypal.com", "paypal.co.uk", "paypal.com.au", "paypal.ca", "paypal.me", "paypalobjects.com"],
     typoLabels: ["paypal"],
   },
   {
@@ -120,6 +120,7 @@ export const BRANDS: BrandProfile[] = [
     substringKeywords: ["facebook", "instagram", "whatsapp"],
     officialDomains: [
       "facebook.com",
+      "facebookmail.com",
       "fb.com",
       "instagram.com",
       "whatsapp.com",
@@ -368,6 +369,24 @@ export const BRANDS: BrandProfile[] = [
   },
   { name: "ANZ", kind: "company", keywords: ["anz"], officialDomains: ["anz.com", "anz.com.au"] },
   { name: "NAB", kind: "company", keywords: ["nab"], officialDomains: ["nab.com.au"] },
+  {
+    name: "a toll road service (E-ZPass, SunPass)",
+    kind: "company",
+    keywords: ["ezpass", "zpass", "sunpass"],
+    substringKeywords: ["ezpass", "sunpass"],
+    officialDomains: [
+      "e-zpassiag.com",
+      "e-zpassny.com",
+      "ezpassnj.com",
+      "ezpassmd.com",
+      "ezpassva.com",
+      "ezpassde.com",
+      "ezpassnh.com",
+      "ezpassri.com",
+      "sunpass.com",
+    ],
+    typoLabels: ["sunpass"],
+  },
   // Government (matched by official hostname suffix)
   {
     name: "a US government agency",
@@ -383,7 +402,7 @@ export const BRANDS: BrandProfile[] = [
     keywords: ["govuk", "hmrc", "dvla", "dwp", "nhs"],
     substringKeywords: ["govuk", "hmrc"],
     officialDomains: [],
-    officialSuffixes: ["gov.uk", "nhs.uk", "nhs.net"],
+    officialSuffixes: ["gov.uk", "nhs.uk", "nhs.net", "gov.scot", "mygov.scot", "gov.wales", "llyw.cymru", "police.uk"],
   },
   {
     name: "a Canadian government service",
@@ -520,7 +539,18 @@ export const LURE_TOKENS = new Set([
 ]);
 
 /** Hostname suffixes that indicate a government domain in the four supported countries. */
-export const GOVERNMENT_SUFFIXES = ["gov", "gov.uk", "gc.ca", "canada.ca", "gov.au"];
+export const GOVERNMENT_SUFFIXES = [
+  "gov",
+  "gov.uk",
+  "gov.scot",
+  "mygov.scot",
+  "gov.wales",
+  "llyw.cymru",
+  "police.uk",
+  "gc.ca",
+  "canada.ca",
+  "gov.au",
+];
 
 /** Well-known URL shortening services. The destination of these links is hidden. */
 export const URL_SHORTENERS = new Set([
@@ -786,7 +816,6 @@ export const EXECUTABLE_EXTENSIONS = new Set([
   "ps1",
   "vbs",
   "vbe",
-  "js",
   "jse",
   "jar",
   "hta",
@@ -809,9 +838,7 @@ export const RISKY_DOCUMENT_EXTENSIONS = new Set([
   "rar",
   "7z",
   "ace",
-  "html",
-  "htm",
-  "shtml",
+  "js",
   "svg",
   "docm",
   "xlsm",
